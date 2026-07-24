@@ -276,6 +276,7 @@
   </div>
 
   <button class="cta" onclick="prepPrint()">Download my report (PDF) 🖨</button>
+  <div id="printHint" style="display:none" class="warn">Nasa Facebook/Messenger/LinkedIn browser ka, kaya hindi gumagana ang PDF dito. I-tap ang <b>⋯</b> (or <b>⌄</b>) sa itaas, piliin ang <b>"Open in browser"</b> / <b>"Open in Chrome/Safari"</b>, at gagana na ang download. <span style="opacity:.8">You're inside Facebook or LinkedIn's built-in browser, which can't print — open this page in your real browser and the PDF button will work.</span></div>
 
   <div id="worksheet">
     <h3 style="font-size:14px;margin-bottom:8px">Family Budget Worksheet</h3>
@@ -288,7 +289,7 @@
 <details class="sect" id="about"><summary>About Alkansya · Tungkol dito</summary>
   <div class="inner" style="font-size:13px;line-height:1.7;color:#3A3428">
     <p style="margin:4px 0 10px"><b>What this is.</b> Alkansya is a financial mirror for Filipino families. It compares your household with 163,268 real families from the Philippine Statistics Authority's Family Income and Expenditure Survey (FIES) 2023 — the same survey behind the country's official poverty statistics — and shows what families like yours earn, spend, and manage to set aside.</p>
-    <p style="margin:0 0 10px"><b>Who made it.</b> Alkansya was built by <b>Karen Mae G. Sarinas-Baydo</b> as a passion project using vibe coding, and as part of the research behind <i>Wala Tayong Pera</i>, her upcoming book on financial stewardship for Filipino families, written from a Christian perspective.</p>
+    <p style="margin:0 0 10px"><b>Who made it.</b> Alkansya was built by <b>Karen Mae G. Sarinas-Baydo</b> as a passion project for the Master in Innovation and Business program at the Asian Institute of Management, and as part of the research behind <i>Wala Tayong Pera</i>, an upcoming book on financial stewardship for Filipino families.</p>
     <p style="margin:0 0 10px"><b>How it works.</b> A gradient boosting model trained on the FIES predicts what families with your income, household size, and location typically spend; cohort benchmarks show the range of savings rates families like yours actually sustain; and all peso figures are adjusted from 2023 survey prices to today's using the official CPI. Every assumption (interest, inflation) is visible and adjustable under Advanced.</p>
     <p style="margin:0 0 10px"><b>What this is not.</b> "Savings" here means income minus expenses in one survey year — not bank balances. Comparisons are associations from a survey, not guarantees about any one family, and nothing here is financial advice. This page stores and sends no data; what you type stays on your device.</p>
     <p style="margin:0"><b>Why it exists.</b> Filipino families are often told they lack discipline with money. The data tells a different story: saving follows capacity. This tool exists so that families can see themselves honestly — walang hiya, walang panghuhusga — and find the one change most likely to help. <i>Hope begins with one small step.</i></p>
@@ -540,6 +541,8 @@ function update(){
   last={mInc,fs,goal,yrs,S,rate,ceilM,typ,co,entries,score,stand,ti};
 }
 function prepPrint(){
+  const inApp=/FBAN|FBAV|FB_IAB|Instagram|Messenger|Line\/|MicroMessenger|TikTok/i.test(navigator.userAgent||"");
+  if(inApp){const ph=document.getElementById("printHint");ph.style.display="block";ph.scrollIntoView({behavior:"smooth",block:"center"});return;}
   const L=last;
   $("wsMeta").innerHTML="Income: <b>"+peso(L.mInc)+"/mo</b> · Household: <b>"+L.fs+"</b> · Goal: <b>"+peso(L.goal)+" in "+L.yrs+" yrs</b> · Required: <b>"+peso(L.S/12)+"/mo</b> · Ceiling: <b>"+(L.ceilM>0?peso(L.ceilM):"—")+"/mo</b> · Health Score: <b>"+L.score+"/100</b>";
   let rows="<tr><th>Category</th><th>Similar families (median)</th><th>My budget</th><th>Actual</th></tr>";
