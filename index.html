@@ -505,11 +505,16 @@ function update(){
 
   // INSIGHT
   let ins;
-  if(ceilM<=0)ins="Right now the goal is bigger than the timeline allows — a runway problem, not a character problem. Families like yours save "+peso(co.ms/12)+"/mo at the median; a longer timeline makes this real.";
-  else if(filled&&above.length===0)ins="Your entered spending is at or below similar families in every category you shared — your foundation is already disciplined. Your next lever is time and consistency, not cutting.";
-  else if(gap<-1000&&f>=40)ins="Based on "+co.n.toLocaleString()+" households, your family is in a better position than you may think: similar families already live below your ceiling. The challenge is not income — it is protecting the surplus.";
-  else if(f>=25)ins="Your goal sits within what families like yours actually do. The difference between reaching it and not is rarely discipline in general — it is two or three specific categories.";
-  else ins="For families like yours this savings rate is rare — a capacity signal, not laziness. The data's honest advice: extend the timeline or grow income first; the saving instinct is already there.";
+  const overM = above.reduce((a,t)=>a+t[1],0);   // total monthly overspend vs cohort medians
+  const reqMo = S/12;
+  if(ceilM<=0)ins="Right now the goal is bigger than the timeline allows — a runway problem, not a character problem. Families with your income and household size save "+peso(co.ms/12)+"/mo at the median; a longer timeline makes this real.";
+  else if(filled&&above.length===0)ins="Your entered spending is at or below families with your income and household size in every category you shared — this positive verdict is earned by your own numbers. Your next lever is time and consistency, not cutting.";
+  else if(filled)ins="The honest mirror: your entered spending runs "+peso(overM)+"/month above families with your income and household size, across "+above.length+" categor"+(above.length>1?"ies":"y")+". At this income, the lifestyle is the challenge — "+(overM>=reqMo
+    ? "and that is actually workable news, because the overspend ("+peso(overM)+"/mo) is bigger than the "+peso(reqMo)+"/mo your goal needs. The goal lives entirely inside spending you already control."
+    : "closing that gap frees "+peso(overM)+"/mo of the "+peso(reqMo)+"/mo your goal needs; the remainder has to come from income or a longer timeline. No amount of ipon advice changes that arithmetic.");
+  else if(gap<-1000&&f>=40)ins="On paper the goal fits: families with your income and household size typically spend "+peso(-gap)+"/month less than your ceiling. But that is a statement about them, not yet about you — whether it holds for your household depends on your actual spending. Fill the Reality Check above for the true mirror.";
+  else if(f>=25)ins="Your goal sits within what families with your income and household size actually do. Whether your household is on that path depends on your actual spending — the Reality Check above turns this from a statistic into your mirror.";
+  else ins="For families with your income and household size this savings rate is rare — a capacity signal, not laziness. The data's honest advice: extend the timeline or grow income first; the saving instinct is already there.";
   $("insight").textContent=ins;
 
   last={mInc,fs,goal,yrs,S,rate,ceilM,typ,co,entries,score,stand,ti};
