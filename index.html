@@ -163,7 +163,7 @@
       <div class="pl" id="pWhere">—</div>
       <div class="tiers" id="tierBar"></div>
       <div class="tierlbl"><span>&lt;₱8k</span><span>₱8–17k</span><span>₱17–25k</span><span>₱25–37k</span><span>₱37–58k</span><span>₱58k+</span></div>
-      <div class="sub" style="color:#8a8270;font-size:10.5px;margin-top:2px">Income tier per month — your household's tier is highlighted</div>
+      <div class="sub" style="color:#8a8270;font-size:10.5px;margin-top:2px">Income tier per month (2023-survey pesos) — your income is inflation-adjusted before matching; all peso benchmarks shown are adjusted to today's prices</div>
       <div class="pgrid">
         <div><div class="v" id="pN">—</div><div class="l">similar families</div></div>
         <div><div class="v" id="pInc">—</div><div class="l">their median income</div></div>
@@ -197,6 +197,8 @@
     <details class="adv"><summary>Advanced assumptions</summary>
       <div class="sub" style="margin-top:8px">Assumed yearly interest (conservative default): <b id="retOut" style="color:var(--cream)">2%</b></div>
       <input type="range" id="ret" min="0" max="8" step="0.5" value="2">
+      <div class="sub" style="margin-top:8px">Prices since the 2023 survey (inflation adjustment): <b id="inflOut" style="color:var(--cream)">+11%</b></div>
+      <input type="range" id="infl" min="0" max="25" step="1" value="11">
     </details>
   </div>
 
@@ -283,7 +285,7 @@
   </div>
 </div>
 
-<p class="note">*"Similar families spend" is a gradient boosting model prediction trained on PSA FIES 2023. "Savings" means income minus expenses in one survey year, not a bank balance. All percentages describe what similar households reported in that year; comparisons are associations, not guarantees, and none of this is financial advice. This page stores and sends no data.</p>
+<p class="note">The survey behind this tool was taken in 2023; all peso benchmarks are adjusted to today's prices using a default +11% (PSA CPI: 3.2% in 2024, 1.7% in 2025, and a 2026 surge led by transport and food), and your income is converted to 2023 pesos before any comparison. Change the assumption under Advanced. *"Similar families spend" is a gradient boosting model prediction trained on PSA FIES 2023. "Savings" means income minus expenses in one survey year, not a bank balance. All percentages describe what similar households reported in that year; comparisons are associations, not guarantees, and none of this is financial advice. This page stores and sends no data.</p>
 <p class="fb">Did this help? What's missing? <a href="https://forms.gle/gWJ4tdQ4PaSXRWrf7 " target="_blank" rel="noopener">Tell us</a></p>
 </div>
 
@@ -324,10 +326,13 @@ function feasAt(co,rate){
   return 0;
 }
 function incStanding(annual){let p=0;while(p<99&&IPCT[p]<annual)p++;return p;}
-function plan(mInc,fs,areaI,rem,goal,yrs,r){
+function plan(mInc,fs,areaI,rem,goal,yrs,r,infl){
+  infl=infl||1;
   const annual=mInc*12;
   const S=r>0?goal*r/(Math.pow(1+r,yrs)-1):goal/yrs;
-  return {annual,S,rate:S/annual*100,ceilM:(annual-S)/12,typ:gbmSpend(mInc,fs,areaI,rem)/12,co:CO[ck(annual,fs)]};
+  return {annual,S,rate:S/annual*100,ceilM:(annual-S)/12,
+          typ:gbmSpend(mInc/infl,fs,areaI,rem)/12*infl,
+          co:CO[ck(annual/infl,fs)]};
 }
 function fmtMonths(m){
   if(!isFinite(m)||m>360)return "30+ years";
@@ -356,27 +361,29 @@ function animScore(to){
 let last={};
 function update(){
   const mInc=Math.max(1000,+$("inc").value||25000), fs=+$("fs").value, goal=+$("goal").value, yrs=+$("yrs").value, r=+$("ret").value/100;
+  const infl=1+(+$("infl").value)/100;
+  $("inflOut").textContent="+"+(+$("infl").value)+"%";
   [...$("incQuick").children].forEach(b=>b.classList.toggle("on",+b.dataset.v===mInc));
   $("fsOut").textContent=fs; $("goalOut").textContent=peso(goal);
   $("yrsOut").textContent=yrs+(yrs>1?" years":" year"); $("retOut").textContent=(+$("ret").value).toFixed(1).replace(/\.0$/,"")+"%";
   $("extrap").style.display=mInc>110000?"block":"none";
-  const P=plan(mInc,fs,area,remit,goal,yrs,r);
+  const P=plan(mInc,fs,area,remit,goal,yrs,r,infl);
   const {S,rate,ceilM,typ,co}=P;
   const f=Math.max(0,Math.min(100,feasAt(co,rate)));
   const gap=typ-ceilM;
-  const stand=incStanding(P.annual);
-  const ti=tierIdx(P.annual);
-  const key=ck(P.annual,fs), fb=key.split("|")[1];
+  const stand=incStanding(P.annual/infl);
+  const ti=tierIdx(P.annual/infl);
+  const key=ck(P.annual/infl,fs), fb=key.split("|")[1];
   const step3open=$("step3").classList.contains("show");
 
   // Reality check
   let filled=0, above=[], below=[];
   ACTS.forEach(([id,cat])=>{const v=+($(id).value||0); if(v>0){filled++;
-    const med=co.cats[cat]/12; if(v>med*1.1) above.push([cat,v-med,v,med]); else below.push([cat,co.cats[cat]/12-v,v,med]);}});
+    const med=co.cats[cat]/12*infl; if(v>med*1.1) above.push([cat,v-med,v,med]); else below.push([cat,med-v,v,med]);}});
   above.sort((a,b)=>b[1]-a[1]);
 
   // HERO (standing-first, emotional)
-  const cohortSaveLine="Families like yours usually save "+peso(co.ms/12)+" a month.";
+  const cohortSaveLine="Families like yours reported a surplus of about "+peso(co.ms/12*infl)+" a month (2023 survey, adjusted to today's prices).";
   let hl,hs;
   if(stand>=60){hl="Your income is higher than "+stand+"% of Filipino households.";hs=cohortSaveLine+" Here's where you stand — and what similar families do with it.";}
   else if(stand>=45){hl="You're right in the heart of Filipino households.";hs="About half of families nationwide earn more than yours, and about half earn less. "+cohortSaveLine;}
@@ -389,8 +396,8 @@ function update(){
   $("pWhere").textContent=FBN[fb]+" · "+(area===2?"Metro Manila":area===1?"City":"Countryside")+(remit?" · with remittances":"");
   $("tierBar").innerHTML=TIERS.map((t,i)=>'<div class="t'+(i===ti?' cur':'')+'" style="background:'+t[2]+'"></div>').join("");
   $("pN").textContent=co.n.toLocaleString();
-  $("pInc").textContent=peso(co.mi/12)+"/mo";
-  $("pSav").textContent=peso(co.ms/12)+"/mo";
+  $("pInc").textContent=peso(co.mi/12*infl)+"/mo";
+  $("pSav").textContent=peso(co.ms/12*infl)+"/mo";
 
   // SCORE
   const sIncome=stand, sReal=f;
@@ -455,7 +462,7 @@ function update(){
     const em=d/2;const newM=goal/(S/12+em);const earlier=Math.max(0,yrs*12-newM);
     $("oppText").innerHTML="<b>"+CATN[c][0]+"</b>: you reported <b>"+peso(v)+"/month</b> vs a median of <b>"+peso(med)+"</b> — <b class='bad'>"+peso(d)+" more</b>. Closing even half that gap frees <b>"+peso(em)+"/month</b> and reaches your goal about <b>"+fmtMonths(earlier)+" sooner</b> (simple math, no interest).";
   } else if(sd&&sd.top.length&&ceilM>0){
-    const [c,d]=sd.top[0];const em=d/12;
+    const [c,d]=sd.top[0];const em=d/12*infl;
     const newM=goal/(S/12+em);const earlier=Math.max(0,yrs*12-newM);
     $("oppText").innerHTML="Among families like yours, goal-reachers differ most on <b>"+CATN[c][0]+"</b> — about <b>"+peso(em)+"/month less</b> than others. Matching that reaches your goal about <b>"+fmtMonths(earlier)+" sooner</b>. Enter your actual spending above for a personalized version.";
   } else $("oppText").textContent=ceilM<=0?"First, make the plan possible: extend the timeline or adjust the goal — then the opportunities become meaningful.":"";
@@ -463,7 +470,7 @@ function update(){
   // CATEGORIES
   const entries=Object.entries(co.cats).sort((a,b)=>b[1]-a[1]).slice(0,5);
   const mx=entries[0][1];
-  $("catList").innerHTML=entries.map(([k,v])=>'<div class="catrow"><span class="nm">'+CATN[k][0]+'<span class="tl">'+CATN[k][1]+'</span></span><div class="bar"><div class="fill" style="width:'+Math.round(v/mx*100)+'%"></div></div><span class="amt">'+peso(v/12)+'</span></div>').join("");
+  $("catList").innerHTML=entries.map(([k,v])=>'<div class="catrow"><span class="nm">'+CATN[k][0]+'<span class="tl">'+CATN[k][1]+'</span></span><div class="bar"><div class="fill" style="width:'+Math.round(v/mx*100)+'%"></div></div><span class="amt">'+peso(v/12*infl)+'</span></div>').join("");
 
   // PATTERNS
   if(sd&&sd.top.length){
@@ -489,7 +496,7 @@ function update(){
     if(whatSel==="member"){Q=plan(mInc,fs+1,area,remit,goal,yrs,r);label="With one more family member";}
     if(whatSel==="prov"){Q=plan(mInc,fs,0,remit,goal,yrs,r);label="Living in the countryside";}
     if(whatSel==="remit"){Q=plan(mInc,fs,area,0,goal,yrs,r);label=remit?"If remittances stop (same total income)":"Without remittances (same total income)";}
-    if(whatSel==="food"){const extra=co.cats.FOOD_HOME*0.10/12;const nm=goal/(S/12+extra);Q=null;
+    if(whatSel==="food"){const extra=co.cats.FOOD_HOME*0.10/12*infl;const nm=goal/(S/12+extra);Q=null;
       $("whatOut").innerHTML="<b>Food −10%:</b> trimming food-at-home by 10% of your cohort's median frees about <b>"+peso(extra)+"/mo</b> — goal in <b>"+fmtMonths(nm)+"</b> instead of "+fmtMonths(yrs*12)+".";}
     if(Q){const df=Q.typ-typ;const qf=Math.max(0,Math.min(100,feasAt(Q.co,Q.rate)));
       $("whatOut").innerHTML="<b>"+label+":</b> required rate becomes <b>"+Q.rate.toFixed(1)+"%</b>"+(Math.abs(df)>200?", similar families' spending shifts <b>"+(df>0?"+":"−")+peso(df)+"/mo</b>":"")+" — about <b>"+qf.toFixed(0)+"%</b> of comparable households reported saving at that level (vs "+f.toFixed(0)+"% now).";}
@@ -500,14 +507,14 @@ function update(){
   for(let yy=1;yy<=Math.min(yrs,10);yy++){bal=(bal+S)*(1+r);if(yy===yrs)bal=Math.max(bal,goal);
     miles+='<div class="patt"><span>End of year '+yy+'</span><b>'+peso(Math.min(bal,goal))+(bal>=goal?' ✓':'')+'</b></div>';}
   $("mileList").innerHTML=miles;
-  const medPaceM=co.ms>0?goal/(co.ms/12):Infinity;
-  $("paceLine").innerHTML="At your cohort's median savings pace ("+peso(co.ms/12)+"/mo), this goal takes <b>"+fmtMonths(medPaceM)+"</b>.";
+  const medPaceM=co.ms>0?goal/(co.ms/12*infl):Infinity;
+  $("paceLine").innerHTML="At your cohort's median savings pace ("+peso(co.ms/12*infl)+"/mo, adjusted to today's prices), this goal takes <b>"+fmtMonths(medPaceM)+"</b>.";
 
   // INSIGHT
   let ins;
   const overM = above.reduce((a,t)=>a+t[1],0);   // total monthly overspend vs cohort medians
   const reqMo = S/12;
-  if(ceilM<=0)ins="Right now the goal is bigger than the timeline allows — a runway problem, not a character problem. Families with your income and household size save "+peso(co.ms/12)+"/mo at the median; a longer timeline makes this real.";
+  if(ceilM<=0)ins="Right now the goal is bigger than the timeline allows — a runway problem, not a character problem. Families with your income and household size save "+peso(co.ms/12*infl)+"/mo at the median (adjusted to today's prices); a longer timeline makes this real.";
   else if(filled&&above.length===0)ins="Your entered spending is at or below families with your income and household size in every category you shared — this positive verdict is earned by your own numbers. Your next lever is time and consistency, not cutting.";
   else if(filled)ins="The honest mirror: your entered spending runs "+peso(overM)+"/month above families with your income and household size, across "+above.length+" categor"+(above.length>1?"ies":"y")+". At this income, the lifestyle is the challenge — "+(overM>=reqMo
     ? "and that is actually workable news, because the overspend ("+peso(overM)+"/mo) is bigger than the "+peso(reqMo)+"/mo your goal needs. The goal lives entirely inside spending you already control."
@@ -523,8 +530,9 @@ function prepPrint(){
   const L=last;
   $("wsMeta").innerHTML="Income: <b>"+peso(L.mInc)+"/mo</b> · Household: <b>"+L.fs+"</b> · Goal: <b>"+peso(L.goal)+" in "+L.yrs+" yrs</b> · Required: <b>"+peso(L.S/12)+"/mo</b> · Ceiling: <b>"+(L.ceilM>0?peso(L.ceilM):"—")+"/mo</b> · Health Score: <b>"+L.score+"/100</b>";
   let rows="<tr><th>Category</th><th>Similar families (median)</th><th>My budget</th><th>Actual</th></tr>";
-  L.entries.forEach(([k,v])=>{rows+="<tr><td>"+CATN[k][0]+"</td><td>"+peso(v/12)+"</td><td></td><td></td></tr>";});
-  rows+="<tr><td><b>Savings / Ipon</b></td><td>"+peso(L.co.ms/12)+"</td><td><b>"+peso(L.S/12)+"</b></td><td></td></tr>";
+  const inflW=1+(+document.getElementById("infl").value)/100;
+  L.entries.forEach(([k,v])=>{rows+="<tr><td>"+CATN[k][0]+"</td><td>"+peso(v/12*inflW)+"</td><td></td><td></td></tr>";});
+  rows+="<tr><td><b>Savings / Ipon</b></td><td>"+peso(L.co.ms/12*inflW)+"</td><td><b>"+peso(L.S/12)+"</b></td><td></td></tr>";
   $("wsTable").innerHTML=rows;
   window.print();
 }
@@ -536,7 +544,7 @@ function doShare(){
   else{navigator.clipboard&&navigator.clipboard.writeText(t+u);
     const b=$("shareBtn");const o=b.textContent;b.textContent="Copied! Paste anywhere 📋";setTimeout(()=>b.textContent=o,1800);}
 }
-["inc","fs","goal","yrs","ret","aFood","aOut","aTrans","aComm"].forEach(id=>$(id).addEventListener("input",update));
+["inc","fs","goal","yrs","ret","infl","aFood","aOut","aTrans","aComm"].forEach(id=>$(id).addEventListener("input",update));
 $("incQuick").addEventListener("click",e=>{const b=e.target.closest("button");if(b){$("inc").value=b.dataset.v;update();}});
 $("areaBtns").addEventListener("click",e=>{const b=e.target.closest("button");if(b){area=+b.dataset.v;[...$("areaBtns").children].forEach(x=>x.classList.toggle("on",+x.dataset.v===area));update();}});
 $("remitBtns").addEventListener("click",e=>{const b=e.target.closest("button");if(b){remit=+b.dataset.v;[...$("remitBtns").children].forEach(x=>x.classList.toggle("on",+x.dataset.v===remit));update();}});
