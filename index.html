@@ -124,7 +124,7 @@
 
 <!-- ============ STEP 1 ============ -->
 <div class="step show" id="step1">
-  <div class="card"><h2>Tell us about your family. Answer the following.<span class="tl">Ilarawan ang kalagayan ng iyong pamilya. Sagutin ang mga sumusunod.</span></h2></div>
+  <div class="card"><h2>Tell us about your family. Answer the following questions.<span class="tl">Ilarawan ang kalagayan ng iyong pamilya. Sagutin ang mga sumusunod na tanong.</span></h2></div>
   <div class="card"><h2>Monthly family income<span class="tl">Buwanang kita ng pamilya</span></h2>
     <input type="number" id="inc" min="1000" step="500" value="25000" inputmode="numeric">
     <div class="qbtns" id="incQuick">
@@ -289,7 +289,7 @@
 <details class="sect" id="about"><summary>About Alkansya · Tungkol dito</summary>
   <div class="inner" style="font-size:13px;line-height:1.7;color:#3A3428">
     <p style="margin:4px 0 10px"><b>What this is.</b> Alkansya is a financial mirror for Filipino families. It compares your household with 163,268 real families from the Philippine Statistics Authority's Family Income and Expenditure Survey (FIES) 2023 — the same survey behind the country's official poverty statistics — and shows what families like yours earn, spend, and manage to set aside.</p>
-    <p style="margin:0 0 10px"><b>Who made it.</b> Alkansya was built by <b>Karen Mae G. Sarinas-Baydo</b> as a passion project for the Master in Innovation and Business program at the Asian Institute of Management, and as part of the research behind <i>Wala Tayong Pera</i>, an upcoming book on financial stewardship for Filipino families.</p>
+    <p style="margin:0 0 10px"><b>Who made it.</b> Alkansya was built by <b>Atty. Karen Mae G. Sarinas-Baydo</b> as a passion project and as part of the research behind <i>Wala Tayong Pera</i>, her upcoming book on financial stewardship for Filipino families.</p>
     <p style="margin:0 0 10px"><b>How it works.</b> A gradient boosting model trained on the FIES predicts what families with your income, household size, and location typically spend; cohort benchmarks show the range of savings rates families like yours actually sustain; and all peso figures are adjusted from 2023 survey prices to today's using the official CPI. Every assumption (interest, inflation) is visible and adjustable under Advanced.</p>
     <p style="margin:0 0 10px"><b>What this is not.</b> "Savings" here means income minus expenses in one survey year — not bank balances. Comparisons are associations from a survey, not guarantees about any one family, and nothing here is financial advice. This page stores and sends no data; what you type stays on your device.</p>
     <p style="margin:0"><b>Why it exists.</b> Filipino families are often told they lack discipline with money. The data tells a different story: saving follows capacity. This tool exists so that families can see themselves honestly — walang hiya, walang panghuhusga — and find the one change most likely to help. <i>Hope begins with one small step.</i></p>
@@ -530,9 +530,14 @@ function update(){
   const reqMo = S/12;
   if(ceilM<=0)ins="Right now the goal is bigger than the timeline allows — a runway problem, not a character problem. Families with your income and household size save "+peso(co.ms/12*infl)+"/mo at the median (adjusted to today's prices); a longer timeline makes this real.";
   else if(filled&&above.length===0)ins="Your entered spending is at or below families with your income and household size in every category you shared — this positive verdict is earned by your own numbers. Your next lever is time and consistency, not cutting.";
-  else if(filled)ins="The honest mirror: your entered spending runs "+peso(overM)+"/month above families with your income and household size, across "+above.length+" categor"+(above.length>1?"ies":"y")+". At this income, the lifestyle is the challenge — "+(overM>=reqMo
-    ? "and that is actually workable news, because the overspend ("+peso(overM)+"/mo) is bigger than the "+peso(reqMo)+"/mo your goal needs. The goal lives entirely inside spending you already control."
-    : "closing that gap frees "+peso(overM)+"/mo of the "+peso(reqMo)+"/mo your goal needs; the remainder has to come from income or a longer timeline. No amount of ipon advice changes that arithmetic.");
+  else if(filled){
+    const belowSum=below.reduce((a,t)=>a+Math.max(0,t[1]),0);
+    const net=overM-belowSum;
+    const mixLine="Your mix differs from similar families — higher on "+above.map(t=>CATN[t[0]][0].toLowerCase()).join(", ")+(belowSum>500?", but lower on "+below.filter(t=>t[1]>500).map(t=>CATN[t[0]][0].toLowerCase()).join(", "):"")+". ";
+    if(net<=500) ins=mixLine+"Netted out, your entered spending is at or below families with your income and household size — so the \""+pills[0]+"\" verdict and this mirror agree: families like yours sustain this rate, and your pattern is not the obstacle. Protect the pattern and the plan holds.";
+    else if(rate<=co.mr+1) ins=mixLine+"Netted out, you run about "+peso(net)+"/month above the median pattern. How that squares with the \""+pills[0]+"\" verdict: half of families like yours already save "+co.mr.toFixed(0)+"% of income or more, and your target is "+rate.toFixed(0)+"% — a normal goal for your cohort. Closing the "+peso(net)+" net gap simply puts you in step with the median family, who is already on pace for a goal like yours.";
+    else ins=mixLine+"Netted out, you run about "+peso(net)+"/month above the median pattern — and your target rate ("+rate.toFixed(0)+"%) is higher than your cohort's median ("+co.mr.toFixed(0)+"%), so matching the median pattern is not enough by itself. Closing the net gap frees "+peso(net)+"/mo of the "+peso(reqMo)+"/mo your goal needs; the rest comes from income, a longer timeline, or cuts deeper than the median. That is arithmetic, not judgment.";
+  }
   else if(gap<-1000&&f>=40)ins="There is room on paper: families with your income and household size typically spend "+peso(typ)+"/month, and your plan leaves "+peso(ceilM)+"/month for expenses. But that describes them, not yet you — whether it holds for your household depends on your actual spending. Fill the Reality Check above for the true mirror.";
   else if(f>=25)ins="Your goal sits within what families with your income and household size actually do. Whether your household is on that path depends on your actual spending — the Reality Check above turns this from a statistic into your mirror.";
   else ins="At this income and timeline, the plan needs "+rate.toFixed(0)+"% of income saved — far beyond what Filipino families actually sustain. That is a capacity signal, not laziness, and no amount of tipid closes it. Change one lever: a longer timeline, a smaller goal, or higher income. The saving instinct shows up the moment the math allows it.";
@@ -541,7 +546,7 @@ function update(){
   last={mInc,fs,goal,yrs,S,rate,ceilM,typ,co,entries,score,stand,ti};
 }
 function prepPrint(){
-  const inApp=/FBAN|FBAV|FB_IAB|Instagram|Messenger|Line\/|MicroMessenger|TikTok/i.test(navigator.userAgent||"");
+  const inApp=/FBAN|FBAV|FB_IAB|Instagram|Messenger|LinkedIn|Line\/|MicroMessenger|TikTok/i.test(navigator.userAgent||"");
   if(inApp){const ph=document.getElementById("printHint");ph.style.display="block";ph.scrollIntoView({behavior:"smooth",block:"center"});return;}
   const L=last;
   $("wsMeta").innerHTML="Income: <b>"+peso(L.mInc)+"/mo</b> · Household: <b>"+L.fs+"</b> · Goal: <b>"+peso(L.goal)+" in "+L.yrs+" yrs</b> · Required: <b>"+peso(L.S/12)+"/mo</b> · Ceiling: <b>"+(L.ceilM>0?peso(L.ceilM):"—")+"/mo</b> · Health Score: <b>"+L.score+"/100</b>";
