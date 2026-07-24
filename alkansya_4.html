@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alkansya — the financial mirror for Filipino families</title>
+<meta name="description" content="See where your household stands among 163,268 Filipino families — and the one change most likely to improve your financial future. PSA FIES 2023.">
+<style>
+  :root{--green:#14532D;--green2:#1C4A32;--deep:#0E2A1D;--gold:#E9C46A;--cream:#F4EFE4;--cream2:#EDE4CF;--ink:#1A1A1A;--mut:#8FBFA4;--red:#C0574F;--amber:#B98A1C;--ok:#2C6E49;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Avenir Next','Segoe UI',system-ui,sans-serif;background:var(--deep);color:var(--cream);line-height:1.5}
+  .wrap{max-width:480px;margin:0 auto;padding:20px 14px 60px}
+  header{text-align:center;padding:8px 0 14px}
+  .kicker{font-size:10.5px;letter-spacing:2.5px;color:var(--mut);text-transform:uppercase;margin-bottom:6px}
+  h1{font-size:30px;font-weight:800;letter-spacing:-.5px}
+  .tag{font-size:12.5px;color:var(--mut);margin-top:4px;line-height:1.5}
+  .step{display:none;animation:fadein .45s ease}
+  .step.show{display:block}
+  @keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .card{background:var(--green2);border:1px solid #2E5C44;border-radius:14px;padding:14px 16px;margin-bottom:12px}
+  .card h2{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);font-weight:600}
+  .tl{display:block;font-size:10.5px;color:var(--mut);text-transform:none;letter-spacing:.3px;font-weight:400;margin:1px 0 8px}
+  .big{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums}
+  .sub{font-size:12.5px;color:var(--mut)}
+  input[type=range]{width:100%;margin-top:8px;accent-color:var(--gold);height:26px}
+  input[type=number]{width:100%;padding:11px 12px;border-radius:10px;border:1px solid #2E5C44;background:var(--deep);color:var(--cream);font-family:inherit;font-size:17px;font-weight:700}
+  .qbtns{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+  .qbtns button,.btnrow button{border:1px solid #2E5C44;background:transparent;color:var(--mut);cursor:pointer;font-family:inherit}
+  .qbtns button{padding:7px 12px;border-radius:999px;font-size:12.5px}
+  .qbtns button.on,.btnrow button.on{border:2px solid var(--gold);background:var(--green);color:var(--cream);font-weight:700}
+  .btnrow{display:flex;gap:8px}
+  .btnrow button{flex:1;padding:10px 4px;border-radius:10px;font-size:12.5px}
+  .btnrow .bl{display:block;font-size:9.5px;opacity:.8}
+  .cta{display:block;width:100%;padding:14px;margin:6px 0 14px;border-radius:12px;border:none;background:var(--gold);color:var(--green);font-size:15px;font-weight:800;cursor:pointer;font-family:inherit}
+  .cta.ghost{background:transparent;border:2px solid var(--gold);color:var(--gold)}
+  .hero{background:var(--cream);color:var(--ink);border-radius:14px;padding:18px 16px;margin-bottom:12px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+  .hero .hk{font-size:10.5px;letter-spacing:2px;text-transform:uppercase;color:#8a8270}
+  .hero .hl{font-size:22px;font-weight:800;color:var(--green);line-height:1.3;margin-top:4px}
+  .hero .hs{font-size:13.5px;color:#4A4437;margin-top:6px;line-height:1.6}
+  .panel{background:var(--cream);color:var(--ink);border-radius:14px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.3);margin-bottom:12px}
+  .panel .head{background:var(--green);color:var(--gold);padding:9px 16px;font-size:11px;letter-spacing:2px;text-transform:uppercase;display:flex;justify-content:space-between}
+  .panel .bodyp{padding:14px 16px}
+  .persona{text-align:center;padding:8px 0 2px}
+  .persona .chip{display:inline-block;width:16px;height:16px;border-radius:50%;vertical-align:-2px;margin-right:6px}
+  .persona .pn{font-size:24px;font-weight:800;color:var(--green)}
+  .persona .pl{font-size:13.5px;color:#6B6455;margin-top:2px}
+  .tiers{display:flex;gap:3px;margin:14px 0 4px}
+  .tiers .t{flex:1;border-radius:5px;height:12px;opacity:.35;position:relative}
+  .tiers .t.cur{opacity:1;outline:2.5px solid var(--ink);outline-offset:1.5px}
+  .tierlbl{display:flex;gap:3px;font-size:8.8px;color:#8a8270;text-align:center}
+  .tierlbl span{flex:1;line-height:1.25}
+  .persona .pgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px;text-align:center}
+  .persona .pgrid .v{font-size:15px;font-weight:800;color:var(--green);font-variant-numeric:tabular-nums}
+  .persona .pgrid .l{font-size:9.5px;color:#8a8270;text-transform:uppercase;letter-spacing:.5px}
+  .bigscore{text-align:center;padding:4px 0 8px}
+  .bigscore .n{font-size:48px;font-weight:800;color:var(--green)}
+  .bigscore .d{font-size:13px;color:#8a8270}
+  .score .row{display:flex;align-items:center;gap:10px;margin:7px 0}
+  .score .nm{width:150px;flex-shrink:0;font-size:12.5px;color:#4A4437}
+  .score .bar{flex:1;background:#DDD3BC;border-radius:5px;height:9px;overflow:hidden}
+  .score .fill{height:100%;border-radius:5px;background:var(--green);transition:width .7s ease}
+  .score .vv{width:36px;text-align:right;font-size:12.5px;font-weight:700;color:var(--green)}
+  .metric3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px}
+  .mbox{background:var(--cream2);border-radius:8px;padding:8px 10px}
+  .mbox .lab{font-size:9.5px;color:#6B6455;text-transform:uppercase;letter-spacing:1px}
+  .mbox .val{font-size:15px;font-weight:800;color:var(--green);font-variant-numeric:tabular-nums}
+  .pill{display:inline-block;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:700}
+  .tline{position:relative;height:34px;margin:14px 2px 2px}
+  .tline .rail{position:absolute;top:14px;left:0;right:0;height:6px;background:#DDD3BC;border-radius:3px}
+  .tline .dot{position:absolute;top:9px;width:16px;height:16px;border-radius:50%;background:var(--green);border:3px solid var(--cream)}
+  .tline .flag{position:absolute;top:-4px;font-size:10px;color:#6B6455;transform:translateX(-50%)}
+  .catrow{display:flex;align-items:center;gap:8px;margin-bottom:5px;font-size:12.5px}
+  .catrow .nm{width:145px;flex-shrink:0;color:#4A4437}
+  .catrow .nm .tl{color:#8a8270;font-size:10px;margin:0}
+  .catrow .bar{flex:1;background:#DDD3BC;border-radius:4px;height:7px;overflow:hidden}
+  .catrow .fill{height:100%;background:var(--green);border-radius:4px}
+  .catrow .amt{width:76px;text-align:right;font-variant-numeric:tabular-nums;color:var(--ink);font-weight:600}
+  .rcgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+  .rcbox{border-radius:10px;padding:10px;text-align:center}
+  .rcbox .c{font-size:11px;color:#4A4437}
+  .rcbox .d{font-size:17px;font-weight:800}
+  .rcbox .m{font-size:10px;color:#6B6455}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+  .chips button{padding:8px 11px;border-radius:999px;border:1px solid #C9BFA8;background:#fff;color:#3A3428;font-size:12px;cursor:pointer;font-family:inherit}
+  .chips button.on{border:2px solid var(--green);background:#E7EFE6;font-weight:700}
+  .whatout{font-size:13px;color:#3A3428;margin-top:8px;line-height:1.6}
+  .patt{display:flex;justify-content:space-between;align-items:center;font-size:13.5px;color:#3A3428;padding:6px 2px;border-bottom:1px solid #E4DAC3}
+  .note{font-size:11.5px;color:var(--mut);line-height:1.6;padding:4px 4px 0}
+  .warn{margin-top:8px;font-size:12px;line-height:1.55;color:var(--gold);background:var(--green);border-radius:8px;padding:8px 11px}
+  details.sect{background:var(--cream);color:var(--ink);border-radius:14px;margin-bottom:10px;box-shadow:0 6px 18px rgba(0,0,0,.25);overflow:hidden}
+  details.sect>summary{list-style:none;cursor:pointer;padding:13px 16px;font-size:13px;font-weight:700;color:var(--green);display:flex;justify-content:space-between;align-items:center}
+  details.sect>summary::after{content:"▾";color:#8a8270}
+  details.sect[open]>summary::after{content:"▴"}
+  details.sect .inner{padding:0 16px 14px}
+  details.adv summary{cursor:pointer;font-size:12.5px;color:var(--mut)}
+  .bookcard{background:var(--green);color:var(--cream);border-radius:14px;padding:16px;margin-bottom:12px;border:1px solid var(--gold)}
+  .fb{text-align:center;font-size:12.5px;color:var(--mut);margin-top:10px}
+  .fb a{color:var(--gold)}
+  .good{color:var(--ok)} .bad{color:var(--red)}
+  .conf{position:fixed;top:-12px;font-size:16px;animation:fall linear forwards;pointer-events:none;z-index:99}
+  @keyframes fall{to{transform:translateY(105vh) rotate(540deg);opacity:.4}}
+  @media print{
+    body{background:#fff;color:#000}
+    .card,.cta,.fb,header .kicker,details.adv,.chips,#shareBtn{display:none!important}
+    .panel,details.sect,.hero,.bookcard{box-shadow:none;border:1px solid #999;color:#000;background:#fff}
+    .bookcard{color:#000}
+    details.sect{display:block} details.sect>summary::after{content:""}
+    .step{display:block!important}
+    .wrap{max-width:100%} h1{font-size:18px;color:#000}
+    #worksheet{display:block!important}
+  }
+  #worksheet{display:none;background:#fff;color:#000;padding:14px;border:1px solid #999;border-radius:8px;margin-top:10px}
+  #worksheet table{width:100%;border-collapse:collapse;font-size:12px}
+  #worksheet th,#worksheet td{border:1px solid #999;padding:6px 8px;text-align:left}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="kicker">The financial mirror for Filipino families · PSA FIES 2023</div>
+  <h1>Alkansya</h1>
+  <div class="tag">See where your household stands among <b style="color:var(--cream)">163,268 Filipino families</b> — and the one change most likely to improve your financial future.</div>
+</header>
+
+<!-- ============ STEP 1 ============ -->
+<div class="step show" id="step1">
+  <div class="card"><h2>Tell us about your family — 20 seconds<span class="tl">Ikuwento ang pamilya mo</span></h2></div>
+  <div class="card"><h2>Monthly family income<span class="tl">Buwanang kita ng pamilya</span></h2>
+    <input type="number" id="inc" min="1000" step="500" value="25000" inputmode="numeric">
+    <div class="qbtns" id="incQuick">
+      <button data-v="15000">₱15k</button><button data-v="25000" class="on">₱25k</button><button data-v="50000">₱50k</button><button data-v="75000">₱75k</button><button data-v="100000">₱100k</button>
+    </div>
+    <div class="warn" id="extrap" style="display:none">Above ₱110k/month, few similar families exist in the data — results are less certain.</div>
+  </div>
+  <div class="card"><h2>How many people at home?<span class="tl">Ilan kayo sa bahay?</span></h2>
+    <div class="big" id="fsOut">4</div>
+    <input type="range" id="fs" min="1" max="12" step="1" value="4">
+  </div>
+  <div class="card"><h2>Where do you live?<span class="tl">Saan kayo nakatira?</span></h2>
+    <div class="btnrow" id="areaBtns">
+      <button data-v="0">Countryside<span class="bl">Probinsya</span></button><button data-v="1" class="on">City<span class="bl">Lungsod</span></button><button data-v="2">Metro Manila<span class="bl">NCR</span></button>
+    </div>
+  </div>
+  <div class="card"><h2>Money sent from abroad?<span class="tl">May padala mula sa abroad?</span></h2>
+    <div class="btnrow" id="remitBtns">
+      <button data-v="0" class="on">None<span class="bl">Wala</span></button><button data-v="1">Yes<span class="bl">Meron</span></button>
+    </div>
+  </div>
+  <button class="cta" id="toStep2">See my household profile →</button>
+</div>
+
+<!-- ============ STEP 2 ============ -->
+<div class="step" id="step2">
+  <div class="hero">
+    <div class="hk">Where you stand · Kung nasaan kayo</div>
+    <div class="hl" id="heroLine">—</div>
+    <div class="hs" id="heroSub"></div>
+  </div>
+
+  <div class="panel"><div class="head"><span>Your Household Profile</span><span>FIES 2023</span></div>
+    <div class="bodyp persona">
+      <div class="pn"><span class="chip" id="pChip"></span><span id="pName">—</span></div>
+      <div class="pl" id="pWhere">—</div>
+      <div class="tiers" id="tierBar"></div>
+      <div class="tierlbl"><span>&lt;₱8k</span><span>₱8–17k</span><span>₱17–25k</span><span>₱25–37k</span><span>₱37–58k</span><span>₱58k+</span></div>
+      <div class="sub" style="color:#8a8270;font-size:10.5px;margin-top:2px">Income tier per month — your household's tier is highlighted</div>
+      <div class="pgrid">
+        <div><div class="v" id="pN">—</div><div class="l">similar families</div></div>
+        <div><div class="v" id="pInc">—</div><div class="l">their median income</div></div>
+        <div><div class="v" id="pSav">—</div><div class="l">their median savings</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel"><div class="head"><span>Household Health Score</span><span>benchmark</span></div>
+    <div class="bodyp score">
+      <div class="bigscore"><span class="n" id="scoreN">0</span><span class="d"> / 100</span><div class="d" id="scoreD"></div></div>
+      <div class="row"><span class="nm">Income standing</span><div class="bar"><div class="fill" id="sb1"></div></div><span class="vv" id="sv1">—</span></div>
+      <div class="row"><span class="nm">Goal realism</span><div class="bar"><div class="fill" id="sb2"></div></div><span class="vv" id="sv2">—</span></div>
+      <div class="row"><span class="nm">Breathing room</span><div class="bar"><div class="fill" id="sb3"></div></div><span class="vv" id="sv3">—</span></div>
+      <div class="row" id="discRow" style="opacity:.55"><span class="nm">Spending discipline</span><div class="bar"><div class="fill" id="sb4"></div></div><span class="vv" id="sv4">—</span></div>
+      <div class="sub" style="color:#8a8270;font-size:11px" id="discNote">Goal realism and Spending discipline sharpen as you complete the diagnosis below.</div>
+    </div>
+  </div>
+
+  <button class="cta" id="toStep3">Get my full diagnosis →</button>
+  <button class="cta ghost" id="shareBtn">Share: compare your family 📤</button>
+</div>
+
+<!-- ============ STEP 3 ============ -->
+<div class="step" id="step3">
+  <div class="card"><h2>Savings goal<span class="tl">Ipon goal</span></h2>
+    <div class="big" id="goalOut">₱300,000</div>
+    <input type="range" id="goal" min="50000" max="2000000" step="25000" value="300000">
+    <div style="margin-top:12px" class="sub">Within how many years? <b id="yrsOut" style="color:var(--cream)">5 years</b></div>
+    <input type="range" id="yrs" min="1" max="10" step="1" value="5">
+    <details class="adv"><summary>Advanced assumptions</summary>
+      <div class="sub" style="margin-top:8px">Assumed yearly interest (conservative default): <b id="retOut" style="color:var(--cream)">2%</b></div>
+      <input type="range" id="ret" min="0" max="8" step="0.5" value="2">
+    </details>
+  </div>
+
+  <div class="panel"><div class="head"><span>Your Plan</span><span id="planPill"></span></div>
+    <div class="bodyp">
+      <div class="sub" style="color:#6B6455">Required savings · Kailangang ipon</div>
+      <div class="big" id="reqM" style="font-size:32px;color:var(--green)">₱0<span style="font-size:14px;font-weight:400"> /month</span></div>
+      <div class="sub" style="color:#6B6455" id="smallwin"></div>
+      <div class="metric3">
+        <div class="mbox"><div class="lab">Savings rate</div><div class="val" id="reqR">0%</div></div>
+        <div class="mbox"><div class="lab">Spending ceiling</div><div class="val" id="ceil">₱0</div></div>
+        <div class="mbox"><div class="lab">Similar families spend*</div><div class="val" id="typSpend">₱0</div></div>
+      </div>
+      <div class="sub" style="color:#6B6455;margin-top:6px" id="gapLine"></div>
+      <div style="margin-top:8px"><span class="pill" id="breathPill">—</span></div>
+      <div class="tline"><div class="rail"></div><div id="tDots"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:#8a8270"><span>today</span><span id="tGoalLbl">goal</span></div>
+      <div style="font-size:12.5px;color:#3A3428;margin-top:8px" id="feasText"></div>
+      <div style="font-size:12.5px;color:#3A3428;margin-top:4px" id="pctileLine"></div>
+    </div>
+  </div>
+
+  <div class="panel"><div class="head"><span>What if…?</span><span>simulate</span></div>
+    <div class="bodyp">
+      <div class="chips" id="whatChips">
+        <button data-w="raise">Income +5%</button>
+        <button data-w="member">+1 family member</button>
+        <button data-w="prov">Move to countryside</button>
+        <button data-w="food">Food −10%</button>
+        <button data-w="remit">Remittance stops</button>
+      </div>
+      <div class="whatout" id="whatOut">Tap a scenario to see how your plan changes.</div>
+    </div>
+  </div>
+
+  <div class="card"><h2>Reality check — optional<span class="tl">Aktwal na gastos kada buwan</span></h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div><div class="sub">Food at home</div><input type="number" id="aFood" placeholder="₱ / month" inputmode="numeric" style="font-size:14px;font-weight:400;padding:9px 10px"></div>
+      <div><div class="sub">Eating out</div><input type="number" id="aOut" placeholder="₱ / month" inputmode="numeric" style="font-size:14px;font-weight:400;padding:9px 10px"></div>
+      <div><div class="sub">Transport</div><input type="number" id="aTrans" placeholder="₱ / month" inputmode="numeric" style="font-size:14px;font-weight:400;padding:9px 10px"></div>
+      <div><div class="sub">Phone and internet</div><input type="number" id="aComm" placeholder="₱ / month" inputmode="numeric" style="font-size:14px;font-weight:400;padding:9px 10px"></div>
+    </div>
+    <div class="sub" style="margin-top:6px">Unlocks your personalized diagnosis. Nothing is stored or sent.</div>
+  </div>
+
+  <div class="panel" id="rcPanel" style="display:none"><div class="head"><span>Your Reality Check</span><span>vs similar families</span></div>
+    <div class="bodyp"><div class="rcgrid" id="rcGrid"></div></div>
+  </div>
+
+  <div class="panel"><div class="head"><span>Your Biggest Opportunity</span><span>·</span></div>
+    <div class="bodyp"><div style="font-size:13.5px;color:#3A3428;line-height:1.65" id="oppText"></div></div>
+  </div>
+
+  <details class="sect"><summary>Where similar families' money goes</summary>
+    <div class="inner"><div id="catList" style="margin-top:4px"></div></div>
+  </details>
+
+  <details class="sect"><summary>The three patterns · Ang tatlong pattern</summary>
+    <div class="inner">
+      <div style="font-size:12.5px;color:#3A3428;margin-bottom:6px" id="pattIntro"></div>
+      <div id="pattList"></div>
+      <div style="font-size:12.5px;color:#3A3428;margin-top:8px" id="pattMatch"></div>
+    </div>
+  </details>
+
+  <details class="sect"><summary>Milestones year by year</summary>
+    <div class="inner"><div id="mileList"></div>
+    <div style="font-size:12.5px;color:#3A3428;margin-top:6px" id="paceLine"></div></div>
+  </details>
+
+  <div class="bookcard">
+    <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold)">The numbers explain what. The book explains why.</div>
+    <div id="insight" style="font-size:14px;line-height:1.65;margin-top:8px"></div>
+    <div style="margin-top:10px;font-size:12.5px;color:#CFE3D6;line-height:1.6">This assessment compares your household with 163,268 Filipino families. <b style="color:var(--gold)">Wala Tayong Pera</b> — a book on financial stewardship for Filipino families — explores the beliefs, habits, fears, and decisions behind these numbers.</div>
+  </div>
+
+  <button class="cta" onclick="prepPrint()">Download my report (PDF) 🖨</button>
+
+  <div id="worksheet">
+    <h3 style="font-size:14px;margin-bottom:8px">Family Budget Worksheet</h3>
+    <div id="wsMeta" style="font-size:12px;margin-bottom:8px"></div>
+    <table id="wsTable"></table>
+    <p style="font-size:11px;margin-top:8px">Fill in "Actual" at month's end. "Similar families" is the median of households like yours in PSA FIES 2023.</p>
+  </div>
+</div>
+
+<p class="note">*"Similar families spend" is a gradient boosting model prediction trained on PSA FIES 2023. "Savings" means income minus expenses in one survey year, not a bank balance. All percentages describe what similar households reported in that year; comparisons are associations, not guarantees, and none of this is financial advice. This page stores and sends no data.</p>
+<p class="fb">Did this help? What's missing? <a href="mailto:feedback@example.com?subject=Alkansya%20feedback">Tell us</a></p>
+</div>
+
+<script>
+const GRID={"001":[49100,70100,91200,111300,133000,150200,171100,187500,201400,217400,233100,253100,271400,284100,297900,319600,340800,344600,362900,359100,383900,397600,437500,451800,467300,443000,435300,449900,457000,463500,473700,487100,503800,523700,531000,550300,537000,560200,566900,614500,602600,618200,807400,731200,739800,938300,1100000,858100,865500,918700,1076100,955000,1106200,1317600,1174900,1405900,1211500,1211600,1375300],"002":[55000,76800,98000,118200,138600,155900,175600,192400,206300,222300,236600,255400,273800,284900,301800,322200,343500,352300,367600,373100,397800,411600,431000,430800,460800,470000,472800,489600,496700,503100,513400,526800,543400,563400,570700,589900,576600,599800,606600,654200,642200,657800,700100,730400,753900,828700,961600,832800,838200,882300,1029200,849300,941000,1152400,1072800,1291900,1097500,1097600,1185900],"003":[61600,82500,104600,126000,144200,163200,181000,197500,211900,229000,251000,269800,285400,296500,312700,330500,351800,360300,377400,382900,407600,421400,439500,439300,471000,481800,483000,502100,512800,519300,529600,538400,555100,575000,582300,598300,585000,608200,614900,662500,648200,667100,703600,737200,759400,828800,934100,842900,848200,884800,1031700,851900,943500,1154900,1089100,1293200,1098900,1098900,1194000],"004":[63300,84100,106900,129800,148700,167300,186300,204400,220300,236700,256200,276100,290300,302700,321100,338900,359000,370300,389900,397100,421800,436600,459500,459800,491500,502300,503500,528400,539000,545500,554900,563700,580400,600300,607600,623600,610300,633500,637700,685300,671100,689900,722600,756300,778400,835700,933200,841900,847300,903000,1048200,854900,942600,1151400,1085600,1284400,1064700,1077300,1185000],"005":[65800,86700,110100,133400,152400,169900,190700,208800,225500,242200,262300,282300,296500,308000,325900,343700,363800,375100,393300,399400,424100,437300,460800,471500,491800,498700,506800,531700,542400,550400,561700,572800,589500,609400,616100,645400,634100,651300,655600,703200,688900,707800,749000,782600,804800,859000,963200,871900,872800,957400,1115800,922600,990600,1217100,1151300,1350100,1130400,1134200,1228000],"006":[65700,88100,111500,134800,153800,172300,193000,211100,227900,244500,263300,283300,297500,309000,326200,343700,363800,375200,393300,399400,424200,437400,460800,471500,491800,498700,506900,531700,541700,549700,561000,572200,593300,613200,619900,650600,636600,653900,658200,705800,691500,713300,728600,779000,774600,828900,926300,835100,834300,916400,1023200,891900,927700,1134900,1047400,1267900,1048300,1060900,1154700],"007":[68000,90400,113800,137600,156800,175300,196400,214900,231700,248400,268000,288000,302200,313700,332600,350100,370200,384000,402200,408300,433100,446200,469700,479400,499700,506600,514700,539600,543500,557700,574500,585700,606800,626700,633400,664000,650100,667400,671700,719300,705000,723000,733400,795800,791400,845700,959500,843300,861700,939200,1006700,917900,953800,1170000,1069800,1429000,1068500,1084300,1118700],"008":[68000,90400,113800,137600,156800,175300,196400,214900,231700,248400,268000,288000,302200,313700,332600,350100,370200,384000,402200,408300,433100,446200,469700,479400,499700,506600,514700,539600,543500,557700,571400,582600,601700,621600,628300,659000,654500,658300,705500,714200,699900,718000,730400,792800,788300,842600,956400,840300,858600,936100,1003700,921200,957000,1166900,1066700,1420200,1057300,1073100,1107500],"009":[72800,95200,118600,142400,161600,180100,201200,220800,237600,254200,275000,294900,309100,320700,339600,356600,376700,390100,408300,414400,439200,452300,475800,485400,505800,512700,520800,545700,536500,572500,586200,596900,616000,635900,642600,672200,622300,619900,693100,703500,689200,707300,719700,782100,776800,831100,944900,847700,844900,922400,990000,907400,931300,1119500,1095500,1469600,1069300,1085100,1119500],"0010":[74900,96900,120300,144100,163300,181900,202900,222500,239300,255900,276700,296600,310800,322400,341300,358300,378400,391800,410000,416100,440900,454000,477500,487100,507500,514400,522500,547400,538200,579400,542600,592000,629400,649300,657500,687200,642500,640200,704900,715300,701000,719000,737300,792900,785000,831200,952400,855200,852400,930000,997500,915000,917800,1106000,1115900,1489900,1089600,1113800,1125500],"0011":[74900,96900,120300,144100,163300,181900,202900,222500,239300,255900,276700,296600,310800,322400,341300,358300,378400,391800,410000,416100,440900,454000,477500,487100,507500,514400,522500,547400,538200,579400,542600,592000,629400,649300,657500,687200,662800,660400,714900,725300,711000,729100,747400,803000,795000,841200,962500,865300,862500,940000,1007600,925000,927900,1116100,1115900,1489900,1089600,1113800,1125500],"0012":[74600,96600,120000,143800,163000,181600,202600,222200,239000,255700,276400,296300,310500,322100,341000,358000,378100,391500,409700,415800,440600,453700,477200,486900,507200,514100,522200,547100,537900,579100,533800,586400,623800,643700,651900,681500,657100,654800,709300,719700,705400,723500,741700,797400,789400,835600,952300,855100,852300,929900,997400,914900,917700,1105900,1105700,1479800,1079500,1074600,1086200],"011":[51000,72000,94000,114100,135800,154900,177300,194500,211100,229700,246100,265500,287300,300800,316500,340700,362600,364300,384000,381200,406000,421600,461200,475200,491200,467300,450900,466300,476000,480800,486500,494600,502600,522500,529800,544000,530700,553300,560000,607600,595700,611300,800500,704400,660800,901100,1062800,845100,862200,913600,941700,896100,1047300,1274600,1150300,1321800,1168600,1161000,1336400],"012":[56500,79300,101600,121800,142200,161400,182500,200100,216800,235400,249900,268400,290300,302200,320800,343900,365800,372600,389200,395800,420500,436100,455200,454700,485200,494900,489000,506500,516200,521000,526700,534800,542800,562700,570000,584300,570900,593500,600200,647800,635900,651500,693700,704200,704100,820800,953800,820400,835400,877800,893200,786400,878000,1105300,1044000,1203700,1050500,1042900,1142800],"013":[64800,86000,109700,131200,149300,169400,188900,206000,223200,241700,264600,283800,303700,315600,333300,353700,375500,381800,401400,407900,432700,448300,464200,463700,495900,506500,490000,533000,546300,551000,556800,568300,582200,602100,609400,623600,610300,632900,639600,687200,672900,691800,728200,747500,751400,862700,968100,872200,887300,922100,937500,828200,919800,1147100,1099600,1244200,1091100,1083400,1190300],"014":[65900,87100,111300,134100,153000,172800,193700,212600,231200,249100,269500,289400,307000,320200,340000,360400,381100,391100,413200,422800,447600,464200,485300,485300,517500,528100,511600,560300,573600,578300,584100,595600,609500,629400,636700,651000,637600,660200,664400,712000,697700,716600,749300,768500,772400,871600,969100,873300,888300,942300,955900,833100,920800,1145600,1098100,1236000,1057500,1062500,1181800],"015":[69800,91000,115800,139200,158100,176800,198800,217700,236400,253700,274700,294600,312300,324600,344000,364400,385000,395000,417200,426000,450700,465700,486600,497000,517800,524400,515000,563600,576900,583200,590900,604700,618600,638500,645200,672800,661400,678000,682300,729900,715600,734500,775600,794900,807600,903700,1007900,912000,922700,1005500,1032300,909700,966300,1220100,1172500,1310400,1132000,1128100,1233600],"016":[70100,92800,117600,141000,159900,179500,202600,221500,240100,257400,277400,297300,314900,327200,345900,366000,386700,396700,418000,426800,451600,466600,486800,497200,518000,524600,515100,563800,576400,582700,590400,604200,623400,643300,650000,678900,665000,681600,685900,733500,719200,741000,756300,791200,764000,860200,957600,861800,870800,951000,923100,862400,886800,1121400,1052100,1211700,1033300,1038200,1143700],"017":[71700,94400,119200,143000,162300,181900,205200,224700,243300,260600,281400,301300,319000,331300,351600,371800,392400,404900,426200,437100,461800,476800,497100,506700,527600,534100,524700,573400,579800,592300,605500,619400,638600,658500,665100,694100,680100,696800,701000,748600,734400,752400,762800,809700,782500,878600,992500,871700,890300,964000,944800,888100,912500,1156000,1074100,1372400,1053100,1061300,1107400],"018":[71700,94400,119200,143000,162300,181900,205200,224700,243300,260600,281400,301300,319000,331300,351600,371800,392400,404900,426200,437100,461800,476800,497100,506700,527600,534100,524700,573400,579800,592300,602500,616300,633500,653400,660100,689000,684500,687700,734800,743600,729300,747400,759800,806600,779400,875600,989400,868700,887300,960900,941800,891300,915700,1153000,1071100,1369400,1041900,1050100,1096200],"019":[76600,99300,124000,147800,167100,186700,210100,230500,249200,266500,287700,307600,325200,337600,357900,377500,398200,410300,431700,442500,467200,482300,502500,512100,533000,539600,530100,578800,572200,606500,616600,630000,647100,667100,673700,701600,651600,649300,722500,732900,718600,736700,749100,795900,767900,864100,977900,876100,873500,947200,928000,877600,890000,1105500,1099900,1418800,1053900,1062100,1108200],"0110":[78600,101000,125700,149600,168800,188400,211800,232200,250900,268200,289400,309300,326900,339300,361900,384000,404600,416700,438100,448900,473700,488700,508900,518600,539400,546000,536500,585200,578600,618100,577700,629800,665200,685200,693400,721300,676600,674300,739000,749300,735100,753100,771400,807100,776400,864500,985800,884000,881400,955100,937900,887400,878900,1094400,1122600,1441500,1076600,1093100,1116400],"0111":[78600,101000,125700,149600,168800,188400,211800,232200,250900,268200,289400,309300,326900,339300,361900,384000,404600,416700,438100,448900,473700,488700,508900,518600,539400,546000,536500,585200,578600,618100,577700,629800,665200,685200,693400,721300,696800,694500,749000,759400,745100,763200,781500,817200,786400,874600,995800,894000,891500,965100,948000,897500,889000,1104400,1122600,1441500,1076600,1093100,1116400],"0112":[78300,100700,125500,149300,168500,188100,211500,232000,250600,267900,289100,309000,326700,339000,361600,383700,404300,416500,437800,448600,473400,488400,508600,518300,539100,545700,536200,584900,578300,617800,568900,624100,659600,679500,687700,715600,691200,688900,743400,753800,739500,757500,775800,811600,780800,868900,985700,883900,881300,955000,937800,887300,878800,1094300,1112400,1431300,1066400,1053900,1077200],"101":[53100,74100,95200,116200,139000,157100,179100,196500,209100,224600,243900,265600,286500,300500,318700,340800,361000,366800,392500,389500,412500,425200,465900,484100,498100,474500,477300,500300,515000,524400,534600,542500,559200,578300,594200,615300,601900,628500,632300,676800,664900,663300,772200,795400,718100,943800,1106100,883200,869400,883700,1074500,957300,1108500,1329000,1180800,1397600,1217400,1217500,1314900],"102":[58700,80500,101800,122800,144400,162500,183400,201100,213700,229200,247100,267200,288100,300600,321800,343000,363200,374100,396800,403500,426500,439200,459400,463100,491600,501500,514900,540000,554700,564100,574300,582200,598900,618000,633900,655000,641600,668200,672000,716500,704500,702900,771400,794600,776000,834300,967800,858000,842100,847300,1027600,851700,943300,1163900,1065700,1270600,1090400,1090500,1112400],"103":[64800,85800,107900,130400,149700,169700,189700,207200,220900,237600,261900,281900,299900,311300,331300,349600,369800,380400,401900,408600,431600,446100,463700,465100,495400,504600,516200,541300,551300,560000,570200,581800,598400,617600,633500,651300,638000,664600,668300,712800,698500,700200,762900,792400,773800,832100,938000,865700,849900,847600,1027800,852000,943600,1164100,1079700,1269600,1089500,1089500,1111400],"104":[66900,87900,110600,134600,154600,174200,195400,213600,228800,245300,267200,287100,303700,316300,336800,355100,375000,388400,409900,417700,440700,456200,478600,480100,510400,519600,531300,562000,572100,580700,590100,601600,618300,637400,653300,671100,657800,684400,686800,731400,717100,718700,779400,808900,790300,836500,934500,862200,846400,863200,1041700,852400,940100,1160600,1076200,1260700,1055300,1074200,1102400],"105":[68200,89200,112600,137000,157100,175700,197200,215400,231400,248600,270600,290500,307100,319700,340000,358300,378200,391600,411600,418700,441700,455600,479200,491100,509200,518400,530900,561700,571800,581900,593300,607000,623700,642800,658100,687500,676100,696800,699300,743800,729500,731100,800300,829800,811200,857400,962100,889800,869600,915200,1111500,922300,990300,1228500,1144100,1328600,1123200,1133200,1161400],"106":[67200,89600,113000,137500,157600,176600,198100,216300,232300,249500,270800,290700,307400,320000,340000,358300,378200,391600,411700,418700,441800,455700,479200,491100,509300,518500,531000,561700,571100,581300,592600,606500,627500,646700,662000,692600,678700,699400,701900,746400,732100,736700,779900,826200,788400,834700,932700,860400,838400,881600,1026200,898900,934700,1153700,1047500,1253800,1048400,1067300,1095400],"107":[68400,90900,114300,138900,159300,178300,200100,218800,234800,252000,272800,292800,309400,322000,342700,361000,380900,396800,418300,425400,448400,462300,485100,497100,515200,524400,536900,567700,570900,588400,605200,619100,640200,659300,674600,705300,691300,708600,711100,758700,744400,742100,784700,841400,803600,849800,964200,867000,864200,937700,1004500,915700,951500,1179500,1060600,1405600,1059300,1081400,1109600],"108":[68400,90900,114300,138900,159300,178300,200100,218800,234800,252000,272800,292800,309400,322000,342700,361000,380900,396800,418300,425400,448400,462300,485100,497100,515200,524400,536900,567700,570900,588400,602100,616000,635100,654200,669500,700200,695700,699500,744900,753600,739300,737000,781600,838300,800600,846800,961100,863900,861100,934700,1001400,918900,954700,1176400,1057600,1396800,1048100,1070200,1098400],"109":[72200,94600,118000,142600,163000,182000,203800,223600,239700,256800,280000,299900,316600,329200,349900,367600,387500,403100,424700,431700,454700,468700,491200,503100,521300,530500,543000,573700,563900,603200,616900,630300,649400,668500,682500,712100,662100,659800,731200,741600,727300,725000,769600,826300,788500,834700,949100,851900,849100,922600,989400,906900,930700,1112400,1088500,1452400,1062200,1084300,1112500],"1010":[74700,96700,120100,143900,164300,183300,205100,224900,241000,258100,281300,301300,317900,330500,351200,369000,388900,404400,426000,433000,456000,470000,492500,504400,522600,531800,544300,575000,565200,609700,582300,625000,662400,681500,695500,725100,680500,678100,741000,751400,737100,734800,779400,836100,798800,845000,959400,862200,859300,932900,999700,917100,920000,1101700,1111600,1475400,1085300,1115700,1144200],"1011":[74700,96700,120100,143900,164300,183300,205100,224900,241000,258100,281300,301300,317900,330500,351200,369000,388900,404400,426000,433000,456000,470000,492500,504400,522600,531800,544300,575000,565200,609700,582300,625000,662400,681500,695500,725100,700700,698300,751100,761400,747200,744800,789400,846100,808800,855100,969400,872200,869400,943000,1009700,927200,930100,1111700,1111600,1475400,1085300,1115700,1144200],"1012":[74400,96400,119800,143600,164000,183100,204800,224600,240700,257800,281000,301000,317600,330200,350900,368700,388600,404100,425700,432700,455700,469700,492200,504100,522300,531500,544000,574700,564900,609400,573500,619400,656700,675800,689800,719500,695000,692700,745400,755800,741500,739200,783800,840500,803200,849400,959300,862100,859200,932800,999600,917000,919900,1101600,1101400,1465300,1075100,1076500,1105000],"111":[58100,79100,101100,122100,144900,164900,188300,206400,222900,242800,264000,284400,308900,323700,345000,368900,389100,391500,414700,410100,433100,447700,487300,504300,518800,495700,489700,513500,530800,538500,544200,546800,554800,573900,589800,605900,592500,618500,622200,666700,654800,669100,762100,765400,639700,907300,1069600,870800,866800,880500,942800,901100,1052400,1290800,1160900,1318200,1179200,1171600,1280700],"112":[63200,86100,108400,129500,151100,171100,193300,211800,228300,248200,267400,286700,311100,324400,348600,371700,391900,399400,419500,424700,447700,462200,481400,483900,512900,523300,527900,553800,571000,578700,584500,587000,595000,614100,630100,646100,632800,658700,662500,707000,695000,709400,761900,765200,726900,827100,960600,846100,840100,844700,894300,791500,883100,1121600,1041700,1187100,1048100,1040500,1074100],"113":[70700,92000,115700,138200,157500,178600,200000,218000,235600,255500,282000,301700,324100,336200,358900,379000,399200,406600,426800,431900,454900,471200,485900,486100,516900,525800,519800,568700,581300,588300,594000,608200,622100,641200,657200,673200,659900,685800,689600,734100,719800,737400,784100,799200,766200,866400,972400,895500,889400,886500,936100,830700,922400,1160800,1094700,1225100,1086200,1078500,1112100],"114":[70700,91900,116100,140000,160100,180800,203700,222600,241700,261400,285400,305300,325400,338700,361900,382000,401900,413000,433100,441300,464300,481700,501500,502300,533000,541900,536000,590500,603200,610100,615900,630100,644000,663100,679000,695100,681700,707700,710100,754600,740400,757900,802600,817700,784700,872800,970900,894000,887900,904200,952000,833200,920900,1159300,1093200,1216800,1052600,1063800,1103700],"115":[71700,92900,117700,142200,162200,181900,204500,223400,242400,262000,285600,305500,325600,339000,361400,381500,401400,412600,432700,440900,463900,479700,500600,511700,530400,539300,534200,588700,601400,609900,617600,634000,647900,667000,682300,709900,698600,718600,721000,765600,751300,768900,822100,837200,812900,901100,1005800,928900,918400,963500,1029000,910300,967000,1234500,1168300,1292000,1127800,1130100,1170000],"116":[71100,93800,118600,143000,163100,183200,206900,225800,244800,264400,287500,307400,327500,340900,363100,383200,403100,414200,433600,441700,464700,480500,500800,511900,530600,539500,534400,588900,600900,609300,617000,633600,652800,671900,687200,716100,702200,722200,724600,769200,754900,775400,802700,833500,780400,868500,966500,889600,877500,920100,930900,874100,898500,1146800,1058900,1204300,1040100,1051300,1091200],"117":[71900,94700,119400,144000,164400,184600,208400,227900,246900,266500,289200,309100,329200,342500,365400,385500,405400,419000,439800,450100,473100,488900,508400,519500,538200,547100,542000,596500,602400,618200,631300,647900,667100,686200,701500,730400,716500,733100,735600,783100,768900,782500,809100,850300,797300,885400,999800,897900,895400,966400,947200,890500,914900,1172200,1071600,1355700,1050600,1065000,1104900],"118":[71900,94700,119400,144000,164400,184600,208400,227900,246900,266500,289200,309100,329200,342500,365400,385500,405400,419000,439800,450100,473100,488900,508400,519500,538200,547100,542000,596500,602400,618200,628300,644800,662000,681100,696400,725300,720800,724000,769400,778100,763800,777400,806100,847300,794200,882300,996700,894900,892400,963300,944200,893700,918100,1169100,1068600,1352700,1039400,1053800,1093700],"119":[75600,98400,123200,147800,168200,188300,212200,232700,251700,271300,295700,315600,335700,349000,371900,391500,411400,424600,445500,455700,478700,494500,513800,524900,543600,552500,547400,601900,594700,632300,642400,658400,675600,694700,708700,736600,686600,684300,755700,766000,751800,765400,794000,835200,782200,870300,984700,882800,880300,951300,932100,881700,894100,1105100,1099500,1408200,1053500,1067900,1107800],"1110":[78200,100500,125300,149100,169500,189600,213500,234000,253000,272600,297000,316900,337000,350400,375400,397500,417400,430700,451500,461700,484700,500500,519800,530900,549600,558500,553400,607900,600700,643500,612500,657800,693300,712400,726400,754300,709600,707300,770200,780600,766300,779900,808600,845400,792800,880900,995300,893500,890900,961900,944800,894300,885700,1096700,1124900,1433700,1078900,1101700,1141900],"1111":[78200,100500,125300,149100,169500,189600,213500,234000,253000,272600,297000,316900,337000,350400,375400,397500,417400,430700,451500,461700,484700,500500,519800,530900,549600,558500,553400,607900,600700,643500,612500,657800,693300,712400,726400,754300,729900,727500,780200,790600,776400,790000,818600,855400,802800,891000,1005300,903500,901000,972000,954800,904300,895800,1106800,1124900,1433700,1078900,1101700,1141900],"1112":[77900,100200,125000,148800,169200,189300,213200,233700,252700,272300,296700,316600,336700,350100,375200,397200,417100,430400,451200,461500,484500,500200,519500,530700,549300,558200,553100,607700,600400,643200,603700,652200,687700,706800,720800,748700,724200,721900,774600,785000,770700,784300,813000,849800,797200,885300,995200,893400,890800,961800,944700,894200,885600,1096600,1114700,1423500,1068800,1062500,1102700],"201":[59800,81600,103300,121800,145700,164400,191100,215000,228800,244300,260400,284700,308400,319400,342000,365500,389300,398500,423900,420900,447500,461400,518300,547300,562100,572100,577500,598900,613600,623000,634100,641500,655900,682900,718600,730900,720100,744000,747500,790800,767300,765800,892900,899000,797000,1030700,1161600,941700,927900,938200,1129000,1022600,1138800,1295200,1197700,1403600,1218600,1218600,1270200],"202":[66900,89400,111400,129900,152600,171300,194800,219100,232900,248400,262700,285500,309200,320200,342700,365400,389100,403500,425800,435000,461600,475500,506200,520600,549900,560000,570500,594000,608700,618100,629200,636600,651000,678000,713700,726000,715200,739100,742600,785900,762400,760900,888000,894100,875600,919900,1045500,935700,919800,921100,1101400,937100,1028700,1185100,1137600,1331700,1146600,1146700,1167000],"203":[78300,100000,123000,142900,163200,185000,207800,230300,244000,260600,281400,303400,323200,333000,354400,374100,397900,411300,432500,441700,468200,483900,511200,523500,554500,563800,572700,596100,606200,614800,625900,637000,651400,678400,714100,723200,712300,736300,739800,783000,757200,758900,880300,892700,874200,918600,1016600,944300,928500,922200,1102500,938100,1029800,1186200,1152400,1327400,1142400,1142400,1162800],"204":[81300,103000,126600,147900,169100,192000,216400,240900,256000,271400,289600,310700,329100,338500,360400,380100,402300,414900,436100,443900,470400,487200,514400,525000,556100,565300,574200,603400,613400,622100,632300,643400,657800,684800,720500,729500,718700,742600,744900,788100,762300,764000,883300,895800,877200,918300,1016300,944000,928200,941100,1119600,941800,1029500,1185900,1152200,1326200,1115900,1134700,1161400],"205":[86500,108200,132500,154300,175500,197400,223300,247800,267300,283300,301900,322300,340700,350200,370500,390300,412400,425100,441300,447200,473700,488900,516100,529500,556000,565300,575000,604100,614200,624400,636600,648800,663200,690200,725900,739800,730900,751100,753400,796600,770800,772500,900300,912800,894200,935300,1040000,967700,947500,989200,1185500,1007800,1075800,1249900,1216100,1390100,1179800,1189800,1216400],"206":[90700,113900,138100,160000,181100,205300,231200,255700,275200,291200,307500,327000,345400,354900,373900,394700,416900,431200,447400,453300,479800,495000,521400,534900,561300,570600,580300,609500,618800,629000,641200,653500,672400,699400,735100,750200,738800,759000,761300,804500,790200,792600,846300,899900,881800,858800,985700,913400,891500,930700,1075400,959700,995500,1150300,1094800,1290500,1080200,1099100,1125700],"207":[93400,116600,140900,162900,184300,208500,234700,259700,279200,295200,311100,330600,349000,358400,379900,400600,422800,438400,456100,462000,488600,503700,529400,542900,569300,578600,588300,617500,626800,637000,654700,667000,685800,711800,747500,762700,751200,768100,770300,816600,802300,797800,849100,913100,895000,872000,1015300,918100,915300,984900,1051700,974500,1010300,1174100,1105900,1440400,1089200,1111300,1137900],"208":[102000,125200,149400,171400,192900,217000,243200,268300,287800,303700,319600,339100,357500,367000,388400,409200,431300,446900,464600,470600,497100,512200,533700,547100,573600,582900,592600,621800,631100,641300,655900,667100,683900,699900,734300,737300,735200,738600,783800,791200,776900,772400,825700,889700,871600,848600,991900,894700,891900,961600,1028300,951100,986900,1150700,1082600,1411200,1057700,1079700,1106400],"209":[106300,129500,153700,175800,197200,221400,247600,273700,293200,309100,327400,346900,365300,374800,396200,415200,437400,452600,470300,476200,502800,517900,539100,552500,579000,588300,598000,627200,623500,655400,670000,681200,698100,714100,741100,748400,700900,698100,769300,778400,764100,759600,812900,876900,858800,835800,979100,881900,879100,948700,1015500,938300,962100,1085900,1112700,1466000,1071000,1093000,1119700],"2010":[113500,136300,160600,183600,205100,229200,255400,281500,301000,317000,335200,354700,373100,382600,404000,423100,445200,460500,478200,484100,510600,525800,547000,560400,586900,596200,605900,635000,631300,668500,637800,678400,713500,727000,754000,761400,719200,716500,779100,788200,773900,769400,822700,886700,869100,846100,989400,892200,889400,959000,1025800,948500,951400,1075200,1135800,1489100,1094100,1124500,1151400],"2011":[113500,136300,160600,183600,205100,229200,255400,281500,301000,317000,335200,354700,373100,382600,404000,423100,445200,460500,478200,484100,510600,525800,547000,560400,586900,596200,605900,635000,631300,668500,637800,678400,713500,727000,754000,761400,739500,736700,789200,798300,784000,779500,832800,896800,879100,856100,999500,902200,899400,969100,1035800,958600,961500,1085300,1135800,1489100,1094100,1124500,1151400],"2012":[116600,139400,163600,186700,208200,232300,258500,284600,304100,320000,338300,357800,376200,385700,407100,426100,448300,463500,481300,487200,513700,528900,550000,563500,590000,599300,609000,638100,634400,671500,632400,676100,711200,732200,759200,766600,744600,741900,794400,803500,789200,784600,838000,902000,884300,861300,1000100,873800,871000,940600,1007400,930100,933000,1056800,1107300,1463900,1068900,1070200,1097200],"211":[63100,84800,107500,126000,149900,170100,197800,222300,237500,256400,274500,297500,322300,334700,360600,387100,410800,417600,442900,438400,465000,480700,538600,566400,581700,592200,588800,616600,633900,641600,649400,651400,658600,685600,730000,728600,717700,741000,744500,787800,764300,778700,889900,876200,721000,996500,1127500,931600,927600,937400,1021100,990300,1106600,1275100,1195800,1342300,1198400,1190800,1254000],"212":[69000,92600,115700,134100,156800,177000,201600,226400,241600,260600,276600,298400,323100,335600,361500,387100,410800,422700,445000,452600,479200,495000,527700,541000,570800,581300,583100,613000,630300,638000,645700,647800,654900,682000,726300,724900,714100,737400,740900,784100,760600,775100,886200,872500,829500,915800,1041400,926900,920800,921600,994800,903600,995200,1163700,1134500,1269100,1125200,1117600,1149600],"213":[80400,102500,127000,146900,167300,189600,213600,236500,251400,270400,293600,315800,337400,348700,373100,395700,419400,431000,453300,460900,487500,505000,532500,543600,575100,584100,575400,618800,631400,638400,646100,659800,672900,699900,744300,742900,732000,755300,758900,802100,776200,793900,899300,897400,859700,946000,1044000,967100,961000,954200,1027500,933700,1025300,1193800,1178400,1293900,1150000,1142400,1174400],"214":[81500,103600,128600,149900,171000,194600,220400,245500,261900,279600,300300,322300,341600,352500,377400,400000,422100,432800,455100,463300,489900,508400,535900,545700,577300,586300,577500,626600,639300,646200,654000,667700,680800,707800,752200,750800,739900,763200,765400,808700,782800,800500,903800,901900,864200,947200,1045300,968400,962300,974700,1046100,938900,1026600,1195100,1179600,1292700,1123600,1134800,1173100],"215":[85700,107700,133300,155200,176300,198800,225700,250700,270600,288100,308700,330000,349300,360300,383100,405700,427800,438500,457400,464400,490900,507900,536100,548700,575700,584700,576800,625900,638600,647100,656800,671600,684700,711700,756100,759500,750600,770200,772500,815700,789800,807500,919400,917400,888500,971500,1076200,999300,988800,1030000,1119300,1012100,1068800,1266300,1250800,1363900,1194800,1197200,1235500],"216":[89600,113100,138800,160600,181800,206500,234300,259400,279300,296800,315200,335700,355000,366000,387500,411100,433300,445700,463600,470700,497200,514200,541600,554200,581200,590200,582300,631400,643400,651800,661600,676500,694900,721900,766300,771000,759600,779100,781400,824600,810300,828600,866400,904400,866300,885200,1012200,935300,923100,961800,996300,951100,975500,1153800,1116600,1251500,1082400,1093500,1131900],"217":[92400,115900,141500,163500,185000,209800,237800,263400,283300,300800,318800,339300,358600,369500,393400,417000,439200,452900,472400,481500,508000,525000,551700,564300,591300,600300,592400,641500,653400,661900,677100,692100,710400,736400,780800,785500,774000,790200,792500,838800,824500,835900,871300,919800,881600,900500,1043900,942100,939500,1006600,1011100,965900,990300,1177600,1127800,1401300,1091400,1105700,1144100],"218":[100900,124400,150000,172100,193500,218300,246400,271900,291800,309300,327300,347800,367100,378000,401900,425600,447700,461400,480900,490000,516500,533500,556000,568600,595600,604600,596700,645800,657700,666200,678300,692200,708500,724500,767500,760100,758100,760800,805900,813400,799100,810500,847900,896400,858300,877100,1020500,918700,916100,983200,987700,942500,966900,1154200,1104400,1377900,1059800,1074200,1112500],"219":[105300,128800,154400,176400,197900,222600,250700,277300,297300,314700,334400,354900,374200,385200,409000,430900,453100,466400,485900,495000,521600,538600,560700,573300,600300,609300,601400,650500,649400,679700,691800,705700,722000,738000,773600,770600,723100,720300,791500,800600,786300,797700,835100,883500,845400,864300,1007700,905900,903300,970400,974900,929700,942200,1089500,1134500,1432700,1073100,1087500,1125800],"2110":[112500,135600,161200,184200,205700,230500,258600,285200,305100,322600,342300,362700,382100,393000,419100,442500,464600,478000,497500,506600,533100,550100,572200,584900,611800,620800,612900,662100,660900,696400,663300,706500,741100,754700,790300,787300,745100,742300,805000,814100,799800,811200,848600,892700,855000,873900,1017200,915400,912900,980000,986500,941300,932700,1080100,1158900,1457100,1097500,1120200,1158900],"2111":[112500,135600,161200,184200,205700,230500,258600,285200,305100,322600,342300,362700,382100,393000,419100,442500,464600,478000,497500,506600,533100,550100,572200,584900,611800,620800,612900,662100,660900,696400,663300,706500,741100,754700,790300,787300,765300,762500,815000,824100,809800,821200,858600,902700,865100,884000,1027300,925500,923000,990000,996500,951300,942800,1090100,1158900,1457100,1097500,1120200,1158900],"2112":[120400,143500,169100,192100,213600,238400,266500,293100,313000,330500,350200,370600,390000,400900,435400,458800,480900,494200,513700,522800,549400,566400,588500,601100,628100,637100,629200,678300,677200,712600,671000,717400,752000,773000,808700,805600,783700,780900,890600,899700,885400,896800,934200,978300,940700,959600,1098400,996600,994000,1061100,1067600,1022400,1013900,1161200,1230000,1531500,1171900,1165600,1204200]};
+const CO={"<100k|1-3":{"n":7788,"mi":78633,"mt":66442,"ms":7801,"mr":11.0,"cats":{"FOOD_HOME":34564,"FOOD_OUTSIDE":0,"HOUSING_WATER":13760,"TRANSPORT":1530,"COMMUNICATION":318,"HEALTH":650,"EDUCATION":0,"RECREATION":0},"feas":{"0":84.5,"5":69.6,"10":53.1,"15":39.4,"20":27.8,"25":19.0,"30":12.7,"35":7.5,"40":4.2,"45":2.1,"50":1.1,"60":0.1}},"<100k|4-5":{"n":1586,"mi":88493,"mt":80240,"ms":4979,"mr":6.0,"cats":{"FOOD_HOME":46685,"FOOD_OUTSIDE":245,"HOUSING_WATER":12565,"TRANSPORT":2460,"COMMUNICATION":600,"HEALTH":460,"EDUCATION":300,"RECREATION":360},"feas":{"0":72.0,"5":53.5,"10":37.1,"15":24.4,"20":15.1,"25":8.8,"30":5.2,"35":2.1,"40":1.1,"45":0.4,"50":0.1,"60":0.0}},"<100k|6+":{"n":407,"mi":86552,"mt":80147,"ms":3916,"mr":4.7,"cats":{"FOOD_HOME":49464,"FOOD_OUTSIDE":0,"HOUSING_WATER":11920,"TRANSPORT":1860,"COMMUNICATION":330,"HEALTH":332,"EDUCATION":500,"RECREATION":450},"feas":{"0":67.1,"5":49.1,"10":33.2,"15":20.9,"20":12.0,"25":8.4,"30":3.9,"35":2.2,"40":0.7,"45":0.5,"50":0.2,"60":0.0}},"100-200k|1-3":{"n":23060,"mi":147600,"mt":119590,"ms":23181,"mr":16.1,"cats":{"FOOD_HOME":55307,"FOOD_OUTSIDE":1200,"HOUSING_WATER":24492,"TRANSPORT":5216,"COMMUNICATION":2004,"HEALTH":1219,"EDUCATION":0,"RECREATION":45},"feas":{"0":89.8,"5":78.4,"10":65.3,"15":52.7,"20":41.0,"25":30.6,"30":21.6,"35":14.5,"40":9.0,"45":5.4,"50":2.8,"60":0.5}},"100-200k|4-5":{"n":20219,"mi":157425,"mt":133206,"ms":17740,"mr":11.8,"cats":{"FOOD_HOME":68690,"FOOD_OUTSIDE":1550,"HOUSING_WATER":21540,"TRANSPORT":6510,"COMMUNICATION":2100,"HEALTH":1059,"EDUCATION":820,"RECREATION":620},"feas":{"0":84.7,"5":69.9,"10":54.9,"15":41.4,"20":29.8,"25":20.5,"30":13.3,"35":8.1,"40":4.3,"45":2.1,"50":1.0,"60":0.1}},"100-200k|6+":{"n":8517,"mi":163006,"mt":141824,"ms":15217,"mr":9.7,"cats":{"FOOD_HOME":77545,"FOOD_OUTSIDE":1500,"HOUSING_WATER":19730,"TRANSPORT":6240,"COMMUNICATION":1885,"HEALTH":955,"EDUCATION":1550,"RECREATION":890},"feas":{"0":81.2,"5":64.2,"10":49.3,"15":35.7,"20":24.6,"25":16.2,"30":9.9,"35":5.6,"40":3.0,"45":1.6,"50":0.7,"60":0.0}},"200-300k|1-3":{"n":13115,"mi":241150,"mt":189292,"ms":50154,"mr":20.8,"cats":{"FOOD_HOME":70202,"FOOD_OUTSIDE":4500,"HOUSING_WATER":44210,"TRANSPORT":9864,"COMMUNICATION":4590,"HEALTH":2200,"EDUCATION":0,"RECREATION":250},"feas":{"0":93.3,"5":85.3,"10":74.6,"15":63.0,"20":51.9,"25":41.1,"30":30.9,"35":22.4,"40":15.2,"45":9.8,"50":5.7,"60":1.1}},"200-300k|4-5":{"n":16812,"mi":242304,"mt":198233,"ms":41064,"mr":17.0,"cats":{"FOOD_HOME":86392,"FOOD_OUTSIDE":4500,"HOUSING_WATER":37680,"TRANSPORT":10585,"COMMUNICATION":4200,"HEALTH":1894,"EDUCATION":1150,"RECREATION":800},"feas":{"0":91.1,"5":80.2,"10":67.7,"15":55.0,"20":43.2,"25":32.9,"30":23.9,"35":16.6,"40":11.1,"45":6.7,"50":3.6,"60":0.6}},"200-300k|6+":{"n":10143,"mi":244967,"mt":203591,"ms":37154,"mr":15.2,"cats":{"FOOD_HOME":99191,"FOOD_OUTSIDE":3780,"HOUSING_WATER":31400,"TRANSPORT":10000,"COMMUNICATION":3580,"HEALTH":1620,"EDUCATION":2450,"RECREATION":1075},"feas":{"0":89.9,"5":77.7,"10":64.4,"15":50.5,"20":39.3,"25":28.8,"30":20.0,"35":13.1,"40":8.1,"45":4.5,"50":2.3,"60":0.4}},"300-450k|1-3":{"n":8545,"mi":359330,"mt":265731,"ms":94399,"mr":26.2,"cats":{"FOOD_HOME":80911,"FOOD_OUTSIDE":8900,"HOUSING_WATER":65400,"TRANSPORT":14150,"COMMUNICATION":9900,"HEALTH":3600,"EDUCATION":0,"RECREATION":450},"feas":{"0":95.6,"5":90.4,"10":82.6,"15":73.5,"20":63.2,"25":53.0,"30":41.9,"35":31.8,"40":22.6,"45":15.3,"50":9.4,"60":2.3}},"300-450k|4-5":{"n":12130,"mi":360200,"mt":279387,"ms":80340,"mr":22.2,"cats":{"FOOD_HOME":101945,"FOOD_OUTSIDE":9195,"HOUSING_WATER":59137,"TRANSPORT":15387,"COMMUNICATION":9487,"HEALTH":3170,"EDUCATION":1300,"RECREATION":1000},"feas":{"0":94.8,"5":87.4,"10":77.2,"15":66.1,"20":54.8,"25":43.7,"30":33.3,"35":24.6,"40":16.8,"45":10.9,"50":6.6,"60":1.3}},"300-450k|6+":{"n":8375,"mi":361615,"mt":285825,"ms":74309,"mr":20.4,"cats":{"FOOD_HOME":118572,"FOOD_OUTSIDE":8600,"HOUSING_WATER":50190,"TRANSPORT":14768,"COMMUNICATION":6980,"HEALTH":2740,"EDUCATION":3000,"RECREATION":1260},"feas":{"0":94.7,"5":86.1,"10":74.5,"15":63.0,"20":51.2,"25":40.0,"30":30.9,"35":22.0,"40":14.7,"45":9.6,"50":5.9,"60":1.1}},"450-700k|1-3":{"n":4874,"mi":537866,"mt":372359,"ms":168283,"mr":31.3,"cats":{"FOOD_HOME":94133,"FOOD_OUTSIDE":13200,"HOUSING_WATER":89005,"TRANSPORT":20500,"COMMUNICATION":15800,"HEALTH":5683,"EDUCATION":0,"RECREATION":800},"feas":{"0":97.3,"5":93.8,"10":88.3,"15":81.4,"20":72.8,"25":62.7,"30":52.3,"35":42.0,"40":31.4,"45":22.0,"50":13.9,"60":3.2}},"450-700k|4-5":{"n":7857,"mi":541585,"mt":385925,"ms":157628,"mr":29.0,"cats":{"FOOD_HOME":119416,"FOOD_OUTSIDE":15500,"HOUSING_WATER":82560,"TRANSPORT":22400,"COMMUNICATION":15800,"HEALTH":5036,"EDUCATION":2100,"RECREATION":1424},"feas":{"0":97.1,"5":93.1,"10":86.6,"15":78.7,"20":68.9,"25":58.8,"30":47.9,"35":37.1,"40":26.3,"45":17.5,"50":10.5,"60":2.3}},"450-700k|6+":{"n":6010,"mi":544583,"mt":394806,"ms":147627,"mr":27.5,"cats":{"FOOD_HOME":140879,"FOOD_OUTSIDE":15900,"HOUSING_WATER":74750,"TRANSPORT":21979,"COMMUNICATION":14100,"HEALTH":4610,"EDUCATION":3378,"RECREATION":1526},"feas":{"0":97.4,"5":93.0,"10":86.0,"15":77.5,"20":67.1,"25":55.6,"30":44.0,"35":32.5,"40":22.5,"45":14.7,"50":8.8,"60":2.0}},"700k+|1-3":{"n":2935,"mi":914550,"mt":600223,"ms":361055,"mr":38.6,"cats":{"FOOD_HOME":116492,"FOOD_OUTSIDE":21600,"HOUSING_WATER":147330,"TRANSPORT":39350,"COMMUNICATION":22563,"HEALTH":10920,"EDUCATION":0,"RECREATION":2000},"feas":{"0":97.8,"5":95.2,"10":92.0,"15":87.0,"20":81.5,"25":74.6,"30":66.4,"35":57.4,"40":47.1,"45":35.3,"50":25.6,"60":9.1}},"700k+|4-5":{"n":5096,"mi":913285,"mt":606004,"ms":343074,"mr":36.5,"cats":{"FOOD_HOME":144239,"FOOD_OUTSIDE":25910,"HOUSING_WATER":127852,"TRANSPORT":40718,"COMMUNICATION":22594,"HEALTH":9838,"EDUCATION":11400,"RECREATION":2800},"feas":{"0":98.1,"5":95.8,"10":92.5,"15":87.1,"20":81.0,"25":73.5,"30":64.2,"35":53.1,"40":41.9,"45":31.6,"50":22.0,"60":6.4}},"700k+|6+":{"n":4165,"mi":920400,"mt":616340,"ms":341024,"mr":36.3,"cats":{"FOOD_HOME":176240,"FOOD_OUTSIDE":27120,"HOUSING_WATER":120130,"TRANSPORT":39080,"COMMUNICATION":22800,"HEALTH":9530,"EDUCATION":12000,"RECREATION":2725},"feas":{"0":98.4,"5":96.2,"10":92.7,"15":87.8,"20":81.3,"25":73.8,"30":64.0,"35":53.3,"40":41.9,"45":30.4,"50":20.0,"60":5.9}}};
+const SD={"<100k|1-3":{"thr":20,"n":2163,"top":[["FOOD_HOME",8185],["HOUSING_WATER",2450],["TRANSPORT",500],["OCCASION",500],["COMMUNICATION",430]]},"<100k|4-5":{"thr":20,"n":240,"top":[["FOOD_HOME",10623],["HOUSING_WATER",2134],["TRANSPORT",1120],["OCCASION",500],["FOOD_OUTSIDE",410]]},"100-200k|1-3":{"thr":20,"n":9445,"top":[["FOOD_HOME",13352],["HOUSING_WATER",6000],["TRANSPORT",2040],["FOOD_OUTSIDE",1500],["COMMUNICATION",890]]},"100-200k|4-5":{"thr":20,"n":6024,"top":[["FOOD_HOME",14605],["HOUSING_WATER",3560],["FOOD_OUTSIDE",2000],["TRANSPORT",1900],["OCCASION",1000]]},"100-200k|6+":{"thr":20,"n":2095,"top":[["FOOD_HOME",17246],["HOUSING_WATER",2980],["TRANSPORT",2170],["FOOD_OUTSIDE",2100],["OCCASION",900]]},"200-300k|1-3":{"thr":21,"n":6558,"top":[["FOOD_HOME",15933],["HOUSING_WATER",15145],["FOOD_OUTSIDE",3440],["TRANSPORT",2740],["COMMUNICATION",2130]]},"200-300k|4-5":{"thr":20,"n":7265,"top":[["FOOD_HOME",19078],["HOUSING_WATER",12890],["FOOD_OUTSIDE",4650],["TRANSPORT",3300],["COMMUNICATION",1900]]},"200-300k|6+":{"thr":20,"n":3987,"top":[["FOOD_HOME",23335],["HOUSING_WATER",7803],["FOOD_OUTSIDE",4251],["TRANSPORT",2980],["COMMUNICATION",1410]]},"300-450k|1-3":{"thr":26,"n":4273,"top":[["HOUSING_WATER",23480],["FOOD_HOME",18680],["FOOD_OUTSIDE",5780],["COMMUNICATION",5312],["TRANSPORT",4382]]},"300-450k|4-5":{"thr":22,"n":6065,"top":[["FOOD_HOME",22099],["HOUSING_WATER",20910],["FOOD_OUTSIDE",6900],["COMMUNICATION",5000],["TRANSPORT",4600]]},"300-450k|6+":{"thr":20,"n":4188,"top":[["FOOD_HOME",27214],["HOUSING_WATER",17499],["FOOD_OUTSIDE",7880],["TRANSPORT",4416],["COMMUNICATION",3661]]},"450-700k|1-3":{"thr":31,"n":2437,"top":[["HOUSING_WATER",35788],["FOOD_HOME",19140],["TRANSPORT",7336],["FOOD_OUTSIDE",7100],["COMMUNICATION",5820]]},"450-700k|4-5":{"thr":29,"n":3929,"top":[["HOUSING_WATER",30487],["FOOD_HOME",24720],["FOOD_OUTSIDE",9300],["TRANSPORT",7905],["COMMUNICATION",5390]]},"450-700k|6+":{"thr":28,"n":3005,"top":[["FOOD_HOME",31886],["HOUSING_WATER",24230],["FOOD_OUTSIDE",11700],["TRANSPORT",7280],["COMMUNICATION",5022]]},"700k+|1-3":{"thr":39,"n":1468,"top":[["HOUSING_WATER",61150],["FOOD_HOME",15700],["TRANSPORT",13170],["FOOD_OUTSIDE",8400],["HEALTH",6982]]},"700k+|4-5":{"thr":37,"n":2548,"top":[["HOUSING_WATER",41262],["FOOD_HOME",24206],["EDUCATION",17375],["TRANSPORT",13728],["FOOD_OUTSIDE",12180]]},"700k+|6+":{"thr":36,"n":2083,"top":[["FOOD_HOME",36581],["HOUSING_WATER",33115],["FOOD_OUTSIDE",16100],["TRANSPORT",11944],["EDUCATION",10400]]}};
+const IPCT=[60396,71973,80923,88201,94458,99735,104500,108982,113014,116935,120558,124000,127196,130393,133592,136750,139706,142620,145535,148419,151279,154046,156905,159802,162618,165190,167830,170700,173671,176470,179246,182003,184945,187740,190736,193620,196604,199726,202755,205887,209051,212324,215660,218988,222420,226000,229595,233229,236924,240700,244640,248858,253078,257000,261310,265777,270380,274880,279694,284619,289780,295020,300643,306592,312504,318807,325067,331890,338800,345620,353246,361440,369560,378369,387319,396737,406986,417607,428482,440000,451828,464860,479826,495000,511089,528638,548513,570561,593707,619101,649800,683937,722844,769281,826676,896993,997652,1153624,1449868];
+const INC_STEP=2500, INC_MIN=5000, INC_MAX=150000;
+const CATN={FOOD_HOME:["Food at home","Pagkain sa bahay"],FOOD_OUTSIDE:["Eating out","Kain sa labas"],HOUSING_WATER:["Housing and utilities","Bahay at tubig"],TRANSPORT:["Transport","Pamasahe"],COMMUNICATION:["Phone and internet","Load at internet"],HEALTH:["Health","Kalusugan"],EDUCATION:["Education","Edukasyon"],RECREATION:["Recreation","Libangan"]};
+const TIERS=[["<100k","Foundation","#C8A24B"],["100-200k","Rising","#D98E4A"],["200-300k","Steady","#4C8C5C"],["300-450k","Advancing","#2C6E49"],["450-700k","Established","#3E6FA3"],["700k+","Flourishing","#7B5EA7"]];
+const FBN={"1-3":"Compact Family","4-5":"Growing Family","6+":"Extended Family"};
+const peso=n=>"₱"+Math.round(Math.abs(n)).toLocaleString("en-PH");
+const $=id=>document.getElementById(id);
+let area=1, remit=0, whatSel=null, confettiDone=false;
+const ACTS=[["aFood","FOOD_HOME"],["aOut","FOOD_OUTSIDE"],["aTrans","TRANSPORT"],["aComm","COMMUNICATION"]];
+
+function gbmSpend(mInc,fs,areaI,rem){
+  const key=""+areaI+rem+Math.min(12,Math.max(1,fs));
+  const arr=GRID[key];
+  const pos=(Math.min(INC_MAX,Math.max(INC_MIN,mInc))-INC_MIN)/INC_STEP;
+  const i=Math.floor(pos), f=pos-i;
+  const a=arr[Math.min(i,arr.length-1)], b=arr[Math.min(i+1,arr.length-1)];
+  return a+(b-a)*f;
+}
+function tierIdx(annual){return annual<100000?0:annual<200000?1:annual<300000?2:annual<450000?3:annual<700000?4:5;}
+function ck(annual,fs){
+  const ib=TIERS[tierIdx(annual)][0];
+  const fb=fs<=3?"1-3":fs<=5?"4-5":"6+";
+  return ib+"|"+fb;
+}
+const RG=[0,5,10,15,20,25,30,35,40,45,50,60];
+function feasAt(co,rate){
+  if(rate<=0)return co.feas["0"];
+  if(rate>=60)return co.feas["60"]*Math.max(0,(80-rate)/20);
+  for(let i=0;i<RG.length-1;i++){const a=RG[i],b=RG[i+1];
+    if(rate>=a&&rate<=b){const fa=co.feas[String(a)],fb=co.feas[String(b)];return fa+(fb-fa)*(rate-a)/(b-a);}}
+  return 0;
+}
+function incStanding(annual){let p=0;while(p<99&&IPCT[p]<annual)p++;return p;}
+function plan(mInc,fs,areaI,rem,goal,yrs,r){
+  const annual=mInc*12;
+  const S=r>0?goal*r/(Math.pow(1+r,yrs)-1):goal/yrs;
+  return {annual,S,rate:S/annual*100,ceilM:(annual-S)/12,typ:gbmSpend(mInc,fs,areaI,rem)/12,co:CO[ck(annual,fs)]};
+}
+function fmtMonths(m){
+  if(!isFinite(m)||m>360)return "30+ years";
+  const y=Math.floor(m/12),mm=Math.round(m%12);
+  return (y? y+" yr"+(y>1?"s":""):"")+(y&&mm?" ":"")+(mm? mm+" mo":"")||"0 mo";
+}
+function confetti(){
+  if(confettiDone)return; confettiDone=true;
+  const em=["🪙","💛","🎉","🟢","✨"];
+  for(let i=0;i<26;i++){const d=document.createElement("div");d.className="conf";
+    d.textContent=em[i%em.length];
+    d.style.left=(Math.random()*100)+"vw";
+    d.style.animationDuration=(2.2+Math.random()*1.8)+"s";
+    d.style.animationDelay=(Math.random()*0.6)+"s";
+    document.body.appendChild(d); setTimeout(()=>d.remove(),4600);}
+}
+let scoreShown=0;
+function animScore(to){
+  const el=$("scoreN"); const from=scoreShown; scoreShown=to;
+  const t0=performance.now(), dur=700;
+  function tick(t){const p=Math.min(1,(t-t0)/dur);
+    el.textContent=Math.round(from+(to-from)*(1-Math.pow(1-p,3)));
+    if(p<1)requestAnimationFrame(tick);}
+  requestAnimationFrame(tick);
+}
+let last={};
+function update(){
+  const mInc=Math.max(1000,+$("inc").value||25000), fs=+$("fs").value, goal=+$("goal").value, yrs=+$("yrs").value, r=+$("ret").value/100;
+  [...$("incQuick").children].forEach(b=>b.classList.toggle("on",+b.dataset.v===mInc));
+  $("fsOut").textContent=fs; $("goalOut").textContent=peso(goal);
+  $("yrsOut").textContent=yrs+(yrs>1?" years":" year"); $("retOut").textContent=(+$("ret").value).toFixed(1).replace(/\.0$/,"")+"%";
+  $("extrap").style.display=mInc>110000?"block":"none";
+  const P=plan(mInc,fs,area,remit,goal,yrs,r);
+  const {S,rate,ceilM,typ,co}=P;
+  const f=Math.max(0,Math.min(100,feasAt(co,rate)));
+  const gap=typ-ceilM;
+  const stand=incStanding(P.annual);
+  const ti=tierIdx(P.annual);
+  const key=ck(P.annual,fs), fb=key.split("|")[1];
+  const step3open=$("step3").classList.contains("show");
+
+  // Reality check
+  let filled=0, above=[], below=[];
+  ACTS.forEach(([id,cat])=>{const v=+($(id).value||0); if(v>0){filled++;
+    const med=co.cats[cat]/12; if(v>med*1.1) above.push([cat,v-med,v,med]); else below.push([cat,co.cats[cat]/12-v,v,med]);}});
+  above.sort((a,b)=>b[1]-a[1]);
+
+  // HERO (standing-first, emotional)
+  const cohortSaveLine="Families like yours usually save "+peso(co.ms/12)+" a month.";
+  let hl,hs;
+  if(stand>=60){hl="Your income is higher than "+stand+"% of Filipino households.";hs=cohortSaveLine+" Here's where you stand — and what similar families do with it.";}
+  else if(stand>=35){hl="You're right in the heart of Filipino households.";hs="Your income is higher than "+stand+"% of families nationwide. "+cohortSaveLine;}
+  else {hl="You carry more than most — with less than most.";hs="Your income is higher than "+stand+"% of Filipino households. "+cohortSaveLine+" What follows is about capacity, never character.";}
+  $("heroLine").textContent=hl; $("heroSub").textContent=hs;
+
+  // PROFILE + tier scale
+  $("pChip").style.background=TIERS[ti][2];
+  $("pName").textContent=TIERS[ti][1]+" Household";
+  $("pWhere").textContent=FBN[fb]+" · "+(area===2?"Metro Manila":area===1?"City":"Countryside")+(remit?" · with remittances":"");
+  $("tierBar").innerHTML=TIERS.map((t,i)=>'<div class="t'+(i===ti?' cur':'')+'" style="background:'+t[2]+'"></div>').join("");
+  $("pN").textContent=co.n.toLocaleString();
+  $("pInc").textContent=peso(co.mi/12)+"/mo";
+  $("pSav").textContent=peso(co.ms/12)+"/mo";
+
+  // SCORE
+  const sIncome=stand, sReal=f;
+  const sBreath=Math.max(0,Math.min(100,50+(ceilM>0?((ceilM-typ)/Math.max(typ,1))*100:-50)));
+  let sDisc=null; if(filled)sDisc=Math.round((filled-above.length)/filled*100);
+  const parts=[sIncome,sReal,sBreath].concat(sDisc===null?[]:[sDisc]);
+  const score=Math.round(parts.reduce((a,b)=>a+b,0)/parts.length);
+  animScore(score);
+  $("scoreD").textContent=score>=75?"Strong position":score>=55?"Solid — with clear next steps":score>=35?"Workable — the plan needs adjusting":"Tight — timeline or income first";
+  $("sb1").style.width=sIncome+"%";$("sv1").textContent=Math.round(sIncome);
+  $("sb2").style.width=sReal+"%";$("sv2").textContent=Math.round(sReal);
+  $("sb3").style.width=sBreath+"%";$("sv3").textContent=Math.round(sBreath);
+  if(sDisc!==null){$("discRow").style.opacity=1;$("sb4").style.width=sDisc+"%";$("sv4").textContent=sDisc;$("discNote").textContent="Spending discipline reflects the categories you entered vs your cohort's medians.";}
+  else {$("discRow").style.opacity=.55;$("sb4").style.width="0%";$("sv4").textContent="—";$("discNote").textContent="Goal realism and Spending discipline sharpen as you complete the diagnosis below.";}
+
+  // PLAN
+  const lvl=ceilM<=0?0:f>=50?3:f>=25?2:f>=10?1:0;
+  const pills=[["Critical","#F3D2CE","#7a2018"],["Tight · Masikip","#F3E2C4","#7a5a10"],["Good · Kaya","#DDEBDD","#20512F"],["Comfortable · Maluwag","#CFE6CF","#14532D"]][lvl];
+  $("planPill").textContent=fmtMonths(yrs*12);
+  $("reqM").innerHTML=peso(S/12)+'<span style="font-size:14px;font-weight:400"> /month</span>';
+  $("smallwin").innerHTML="About <b>"+peso(S/365)+" a day</b>. Your 13th-month pay alone covers <b>"+Math.min(100,(mInc/S*100)).toFixed(0)+"%</b> of a year's target.";
+  $("reqR").textContent=rate.toFixed(1)+"%";
+  $("reqR").style.color=rate>60?"var(--red)":rate>35?"var(--amber)":"var(--green)";
+  $("ceil").textContent=ceilM>0?peso(ceilM):"—";
+  $("typSpend").textContent=peso(typ);
+  $("gapLine").textContent=ceilM<=0
+    ?"The required savings exceed your income — extend the years, lower the goal, or grow the income."
+    :(gap>1000?"Your ceiling is "+peso(gap)+"/month below what similar families spend — that gap is where the work is."
+      :gap<-1000?"Good news: families like yours typically already live "+peso(-gap)+"/month below your ceiling."
+      :"Your ceiling is about what similar families spend — reachable with discipline.");
+  $("breathPill").textContent=pills[0];$("breathPill").style.background=pills[1];$("breathPill").style.color=pills[2];
+  let dots="";
+  for(let yy=1;yy<=yrs;yy++){const x=(yy/yrs*100).toFixed(1);
+    dots+='<div class="dot" style="left:calc('+x+'% - 8px);'+(yy===yrs?'background:var(--gold);border-color:var(--green)':'')+'"></div>';
+    if(yrs<=6||yy===yrs||yy%2===0)dots+='<div class="flag" style="left:'+x+'%">'+(yy===yrs?'🎯':'Y'+yy)+'</div>';}
+  $("tDots").innerHTML=dots;
+  $("tGoalLbl").textContent="goal: "+peso(goal);
+  $("feasText").innerHTML=ceilM<=0?"":"In the FIES survey, about <b>"+f.toFixed(0)+"%</b> of households like yours reported saving at least this much over one year (cohort median rate: "+co.mr.toFixed(0)+"%).";
+  $("pctileLine").innerHTML=ceilM<=0?"":"Saving at this rate would place you ahead of about <b>"+(100-f).toFixed(0)+"%</b> of similar households.";
+  if(step3open&&f>=40&&ceilM>0)confetti();
+
+  // REALITY CHECK visual
+  if(filled){
+    $("rcPanel").style.display="block";
+    let g="";
+    above.forEach(([c,d,v,med])=>{g+='<div class="rcbox" style="background:#F5DEDB"><div class="c">'+CATN[c][0]+'</div><div class="d bad">▲ '+peso(d)+' MORE</div><div class="m">you: '+peso(v)+' · similar: '+peso(med)+'</div></div>';});
+    below.forEach(([c,d,v,med])=>{g+='<div class="rcbox" style="background:#DCEBDC"><div class="c">'+CATN[c][0]+'</div><div class="d good">'+(d>med*0.1?'▼ '+peso(d)+' LESS':'✓ ON PAR')+'</div><div class="m">you: '+peso(v)+' · similar: '+peso(med)+'</div></div>';});
+    $("rcGrid").innerHTML=g;
+  } else $("rcPanel").style.display="none";
+
+  // OPPORTUNITY
+  const sd=SD[key];
+  if(filled&&above.length&&ceilM>0){
+    const [c,d,v,med]=above[0];
+    const em=d/2;const newM=goal/(S/12+em);const earlier=Math.max(0,yrs*12-newM);
+    $("oppText").innerHTML="<b>"+CATN[c][0]+"</b>: you reported <b>"+peso(v)+"/month</b> vs a median of <b>"+peso(med)+"</b> — <b class='bad'>"+peso(d)+" more</b>. Closing even half that gap frees <b>"+peso(em)+"/month</b> and reaches your goal about <b>"+fmtMonths(earlier)+" sooner</b> (simple math, no interest).";
+  } else if(sd&&sd.top.length&&ceilM>0){
+    const [c,d]=sd.top[0];const em=d/12;
+    const newM=goal/(S/12+em);const earlier=Math.max(0,yrs*12-newM);
+    $("oppText").innerHTML="Among families like yours, goal-reachers differ most on <b>"+CATN[c][0]+"</b> — about <b>"+peso(em)+"/month less</b> than others. Matching that reaches your goal about <b>"+fmtMonths(earlier)+" sooner</b>. Enter your actual spending above for a personalized version.";
+  } else $("oppText").textContent=ceilM<=0?"First, make the plan possible: extend the timeline or adjust the goal — then the opportunities become meaningful.":"";
+
+  // CATEGORIES
+  const entries=Object.entries(co.cats).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const mx=entries[0][1];
+  $("catList").innerHTML=entries.map(([k,v])=>'<div class="catrow"><span class="nm">'+CATN[k][0]+'<span class="tl">'+CATN[k][1]+'</span></span><div class="bar"><div class="fill" style="width:'+Math.round(v/mx*100)+'%"></div></div><span class="amt">'+peso(v/12)+'</span></div>').join("");
+
+  // PATTERNS
+  if(sd&&sd.top.length){
+    const tot=sd.top.reduce((a,t)=>a+t[1],0);
+    const medals=["🥇","🥈","🥉"];
+    $("pattIntro").textContent="In your cohort, the gap between goal-reachers and everyone else concentrates here (share of the total difference):";
+    $("pattList").innerHTML=sd.top.slice(0,3).map((t,i)=>{
+      const [c,d]=t;const sh=Math.round(d/tot*100);
+      const inp=ACTS.find(a=>a[1]===c);const v=inp?+($(inp[0]).value||0):0;
+      const mark=filled?(v>0?(v>co.cats[c]/12*1.1?"⚠️ above":"✓ ok"):"—"):"";
+      return '<div class="patt"><span>'+medals[i]+' '+CATN[c][0]+'</span><span><b>'+sh+'%</b> <span style="font-size:11px;color:#8a8270">'+mark+'</span></span></div>';
+    }).join("");
+    if(filled){const pats=sd.top.slice(0,3).map(t=>t[0]);
+      const pm=ACTS.filter(([id,c])=>pats.includes(c)&&(+($(id).value||0))>co.cats[c]/12*1.1).length;
+      $("pattMatch").innerHTML="Your entered spending is above the cohort median in <b>"+pm+" of "+Math.min(3,pats.length)+"</b> of these patterns.";
+    } else $("pattMatch").innerHTML="";
+  }
+
+  // WHAT-IF
+  if(whatSel){
+    let Q,label;
+    if(whatSel==="raise"){Q=plan(mInc*1.05,fs,area,remit,goal,yrs,r);label="With income +5% ("+peso(mInc*1.05)+"/mo)";}
+    if(whatSel==="member"){Q=plan(mInc,fs+1,area,remit,goal,yrs,r);label="With one more family member";}
+    if(whatSel==="prov"){Q=plan(mInc,fs,0,remit,goal,yrs,r);label="Living in the countryside";}
+    if(whatSel==="remit"){Q=plan(mInc,fs,area,0,goal,yrs,r);label=remit?"If remittances stop (same total income)":"Without remittances (same total income)";}
+    if(whatSel==="food"){const extra=co.cats.FOOD_HOME*0.10/12;const nm=goal/(S/12+extra);Q=null;
+      $("whatOut").innerHTML="<b>Food −10%:</b> trimming food-at-home by 10% of your cohort's median frees about <b>"+peso(extra)+"/mo</b> — goal in <b>"+fmtMonths(nm)+"</b> instead of "+fmtMonths(yrs*12)+".";}
+    if(Q){const df=Q.typ-typ;const qf=Math.max(0,Math.min(100,feasAt(Q.co,Q.rate)));
+      $("whatOut").innerHTML="<b>"+label+":</b> required rate becomes <b>"+Q.rate.toFixed(1)+"%</b>"+(Math.abs(df)>200?", similar families' spending shifts <b>"+(df>0?"+":"−")+peso(df)+"/mo</b>":"")+" — about <b>"+qf.toFixed(0)+"%</b> of comparable households reported saving at that level (vs "+f.toFixed(0)+"% now).";}
+  } else $("whatOut").textContent="Tap a scenario to see how your plan changes.";
+
+  // MILESTONES
+  let miles="",bal=0;
+  for(let yy=1;yy<=Math.min(yrs,10);yy++){bal=(bal+S)*(1+r);if(yy===yrs)bal=Math.max(bal,goal);
+    miles+='<div class="patt"><span>End of year '+yy+'</span><b>'+peso(Math.min(bal,goal))+(bal>=goal?' ✓':'')+'</b></div>';}
+  $("mileList").innerHTML=miles;
+  const medPaceM=co.ms>0?goal/(co.ms/12):Infinity;
+  $("paceLine").innerHTML="At your cohort's median savings pace ("+peso(co.ms/12)+"/mo), this goal takes <b>"+fmtMonths(medPaceM)+"</b>.";
+
+  // INSIGHT
+  let ins;
+  if(ceilM<=0)ins="Right now the goal is bigger than the timeline allows — a runway problem, not a character problem. Families like yours save "+peso(co.ms/12)+"/mo at the median; a longer timeline makes this real.";
+  else if(filled&&above.length===0)ins="Your entered spending is at or below similar families in every category you shared — your foundation is already disciplined. Your next lever is time and consistency, not cutting.";
+  else if(gap<-1000&&f>=40)ins="Based on "+co.n.toLocaleString()+" households, your family is in a better position than you may think: similar families already live below your ceiling. The challenge is not income — it is protecting the surplus.";
+  else if(f>=25)ins="Your goal sits within what families like yours actually do. The difference between reaching it and not is rarely discipline in general — it is two or three specific categories.";
+  else ins="For families like yours this savings rate is rare — a capacity signal, not laziness. The data's honest advice: extend the timeline or grow income first; the saving instinct is already there.";
+  $("insight").textContent=ins;
+
+  last={mInc,fs,goal,yrs,S,rate,ceilM,typ,co,entries,score,stand,ti};
+}
+function prepPrint(){
+  const L=last;
+  $("wsMeta").innerHTML="Income: <b>"+peso(L.mInc)+"/mo</b> · Household: <b>"+L.fs+"</b> · Goal: <b>"+peso(L.goal)+" in "+L.yrs+" yrs</b> · Required: <b>"+peso(L.S/12)+"/mo</b> · Ceiling: <b>"+(L.ceilM>0?peso(L.ceilM):"—")+"/mo</b> · Health Score: <b>"+L.score+"/100</b>";
+  let rows="<tr><th>Category</th><th>Similar families (median)</th><th>My budget</th><th>Actual</th></tr>";
+  L.entries.forEach(([k,v])=>{rows+="<tr><td>"+CATN[k][0]+"</td><td>"+peso(v/12)+"</td><td></td><td></td></tr>";});
+  rows+="<tr><td><b>Savings / Ipon</b></td><td>"+peso(L.co.ms/12)+"</td><td><b>"+peso(L.S/12)+"</b></td><td></td></tr>";
+  $("wsTable").innerHTML=rows;
+  window.print();
+}
+function doShare(){
+  const L=last;
+  const t="I'm a "+TIERS[L.ti][1]+" Household — income higher than "+L.stand+"% of Filipino families, Health Score "+L.score+"/100. See where your family stands (data: PSA FIES 2023): ";
+  const u=location.href.startsWith("http")?location.href:"";
+  if(navigator.share){navigator.share({title:"Alkansya",text:t,url:u||undefined}).catch(()=>{});}
+  else{navigator.clipboard&&navigator.clipboard.writeText(t+u);
+    const b=$("shareBtn");const o=b.textContent;b.textContent="Copied! Paste anywhere 📋";setTimeout(()=>b.textContent=o,1800);}
+}
+["inc","fs","goal","yrs","ret","aFood","aOut","aTrans","aComm"].forEach(id=>$(id).addEventListener("input",update));
+$("incQuick").addEventListener("click",e=>{const b=e.target.closest("button");if(b){$("inc").value=b.dataset.v;update();}});
+$("areaBtns").addEventListener("click",e=>{const b=e.target.closest("button");if(b){area=+b.dataset.v;[...$("areaBtns").children].forEach(x=>x.classList.toggle("on",+x.dataset.v===area));update();}});
+$("remitBtns").addEventListener("click",e=>{const b=e.target.closest("button");if(b){remit=+b.dataset.v;[...$("remitBtns").children].forEach(x=>x.classList.toggle("on",+x.dataset.v===remit));update();}});
+$("whatChips").addEventListener("click",e=>{const b=e.target.closest("button");if(b){whatSel=whatSel===b.dataset.w?null:b.dataset.w;[...$("whatChips").children].forEach(x=>x.classList.toggle("on",x.dataset.w===whatSel));update();}});
+$("toStep2").addEventListener("click",()=>{$("step2").classList.add("show");$("toStep2").style.display="none";update();$("step2").scrollIntoView({behavior:"smooth"});});
+$("toStep3").addEventListener("click",()=>{$("step3").classList.add("show");$("toStep3").style.display="none";confettiDone=false;update();$("step3").scrollIntoView({behavior:"smooth"});});
+$("shareBtn").addEventListener("click",doShare);
+update();
+</script>
+</body>
+</html>
