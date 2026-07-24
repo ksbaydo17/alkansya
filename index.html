@@ -209,7 +209,7 @@
       <div class="sub" style="color:#6B6455" id="smallwin"></div>
       <div class="metric3">
         <div class="mbox"><div class="lab">Savings rate</div><div class="val" id="reqR">0%</div></div>
-        <div class="mbox"><div class="lab">Spending ceiling</div><div class="val" id="ceil">₱0</div></div>
+        <div class="mbox"><div class="lab">Left for expenses<span class="tl">matitira para sa gastos</span></div><div class="val" id="ceil">₱0</div></div>
         <div class="mbox"><div class="lab">Similar families spend*</div><div class="val" id="typSpend">₱0</div></div>
       </div>
       <div class="sub" style="color:#6B6455;margin-top:6px" id="gapLine"></div>
@@ -272,7 +272,7 @@
   <div class="bookcard">
     <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold)">The numbers explain what. The book explains why.</div>
     <div id="insight" style="font-size:14px;line-height:1.65;margin-top:8px"></div>
-    <div style="margin-top:10px;font-size:12.5px;color:#CFE3D6;line-height:1.6">This assessment compares your household with 163,268 Filipino families. <b style="color:var(--gold)">Wala Tayong Pera</b> — a book on financial stewardship for Filipino families — explores the beliefs, habits, fears, and decisions behind these numbers.</div>
+    <div style="margin-top:10px;font-size:12.5px;color:#CFE3D6;line-height:1.6">This assessment compares your household with 163,268 Filipino families. The story behind these numbers — the beliefs, habits, fears, and decisions — is what I'm writing about in <b style="color:var(--gold)">Wala Tayong Pera</b>, an upcoming book on financial stewardship for Filipino families. Abangan.</div>
   </div>
 
   <button class="cta" onclick="prepPrint()">Download my report (PDF) 🖨</button>
@@ -432,9 +432,9 @@ function update(){
   $("typSpend").textContent=peso(typ);
   $("gapLine").textContent=ceilM<=0
     ?"The required savings exceed your income — extend the years, lower the goal, or grow the income."
-    :(gap>1000?"Your ceiling is "+peso(gap)+"/month below what similar families spend — that gap is where the work is."
-      :gap<-1000?"Good news: families like yours typically already live "+peso(-gap)+"/month below your ceiling."
-      :"Your ceiling is about what similar families spend — reachable with discipline.");
+    :(gap>1000?"This plan leaves you "+peso(ceilM)+"/month for all expenses, but families like yours actually spend "+peso(typ)+" — the plan asks you to live on "+peso(gap)+" less than similar families really do."
+      :gap<-1000?"This plan leaves "+peso(ceilM)+"/month for expenses, and families like yours typically spend "+peso(typ)+" — so there is room on paper."
+      :"This plan leaves about the same amount for expenses as similar families actually spend — tight but possible.");
   $("breathPill").textContent=pills[0];$("breathPill").style.background=pills[1];$("breathPill").style.color=pills[2];
   let dots="";
   for(let yy=1;yy<=yrs;yy++){const x=(yy/yrs*100).toFixed(1);
@@ -442,8 +442,11 @@ function update(){
     if(yrs<=6||yy===yrs||yy%2===0)dots+='<div class="flag" style="left:'+x+'%">'+(yy===yrs?'🎯':'Y'+yy)+'</div>';}
   $("tDots").innerHTML=dots;
   $("tGoalLbl").textContent="goal: "+peso(goal);
-  $("feasText").innerHTML=ceilM<=0?"":"In the FIES survey, about <b>"+f.toFixed(0)+"%</b> of households like yours reported saving at least this much over one year (cohort median rate: "+co.mr.toFixed(0)+"%).";
-  $("pctileLine").innerHTML=ceilM<=0?"":"Saving at this rate would place you ahead of about <b>"+(100-f).toFixed(0)+"%</b> of similar households.";
+  const impossible = ceilM>0 && (rate>60 || f<2);
+  $("feasText").innerHTML= ceilM<=0?"":(impossible
+    ? "<b>Honest verdict:</b> this plan needs "+rate.toFixed(0)+"% of income saved — essentially no Filipino families sustain that, at any income level. The plan, not the family, has to change: a longer timeline, a smaller goal, or higher income."
+    : "About <b>"+f.toFixed(0)+" in 100</b> families with your income and household size manage to save this share of income in a year. For scale: half of families like yours save less than "+co.mr.toFixed(0)+"% of income, half save more.");
+  $("pctileLine").innerHTML="";
   if(step3open&&f>=40&&ceilM>0)confetti();
 
   // REALITY CHECK visual
@@ -519,9 +522,9 @@ function update(){
   else if(filled)ins="The honest mirror: your entered spending runs "+peso(overM)+"/month above families with your income and household size, across "+above.length+" categor"+(above.length>1?"ies":"y")+". At this income, the lifestyle is the challenge — "+(overM>=reqMo
     ? "and that is actually workable news, because the overspend ("+peso(overM)+"/mo) is bigger than the "+peso(reqMo)+"/mo your goal needs. The goal lives entirely inside spending you already control."
     : "closing that gap frees "+peso(overM)+"/mo of the "+peso(reqMo)+"/mo your goal needs; the remainder has to come from income or a longer timeline. No amount of ipon advice changes that arithmetic.");
-  else if(gap<-1000&&f>=40)ins="On paper the goal fits: families with your income and household size typically spend "+peso(-gap)+"/month less than your ceiling. But that is a statement about them, not yet about you — whether it holds for your household depends on your actual spending. Fill the Reality Check above for the true mirror.";
+  else if(gap<-1000&&f>=40)ins="There is room on paper: families with your income and household size typically spend "+peso(typ)+"/month, and your plan leaves "+peso(ceilM)+"/month for expenses. But that describes them, not yet you — whether it holds for your household depends on your actual spending. Fill the Reality Check above for the true mirror.";
   else if(f>=25)ins="Your goal sits within what families with your income and household size actually do. Whether your household is on that path depends on your actual spending — the Reality Check above turns this from a statistic into your mirror.";
-  else ins="For families with your income and household size this savings rate is rare — a capacity signal, not laziness. The data's honest advice: extend the timeline or grow income first; the saving instinct is already there.";
+  else ins="At this income and timeline, the plan needs "+rate.toFixed(0)+"% of income saved — far beyond what Filipino families actually sustain. That is a capacity signal, not laziness, and no amount of tipid closes it. Change one lever: a longer timeline, a smaller goal, or higher income. The saving instinct shows up the moment the math allows it.";
   $("insight").textContent=ins;
 
   last={mInc,fs,goal,yrs,S,rate,ceilM,typ,co,entries,score,stand,ti};
