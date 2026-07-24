@@ -284,7 +284,7 @@
 </div>
 
 <p class="note">*"Similar families spend" is a gradient boosting model prediction trained on PSA FIES 2023. "Savings" means income minus expenses in one survey year, not a bank balance. All percentages describe what similar households reported in that year; comparisons are associations, not guarantees, and none of this is financial advice. This page stores and sends no data.</p>
-<p class="fb">Did this help? What's missing? <a href="https://forms.gle/gWJ4tdQ4PaSXRWrf7 " target="_blank" rel="noopener">Tell us</a>
+<p class="fb">Did this help? What's missing? <a href="https://forms.gle/gWJ4tdQ4PaSXRWrf7 " target="_blank" rel="noopener">Tell us</a></p>
 </div>
 
 <script>
@@ -379,8 +379,8 @@ function update(){
   const cohortSaveLine="Families like yours usually save "+peso(co.ms/12)+" a month.";
   let hl,hs;
   if(stand>=60){hl="Your income is higher than "+stand+"% of Filipino households.";hs=cohortSaveLine+" Here's where you stand — and what similar families do with it.";}
-  else if(stand>=35){hl="You're right in the heart of Filipino households.";hs="Your income is higher than "+stand+"% of families nationwide. "+cohortSaveLine;}
-  else {hl="You carry more than most — with less than most.";hs="Your income is higher than "+stand+"% of Filipino households. "+cohortSaveLine+" What follows is about capacity, never character.";}
+  else if(stand>=45){hl="You're right in the heart of Filipino households.";hs="About half of families nationwide earn more than yours, and about half earn less. "+cohortSaveLine;}
+  else {hl="Money is tight — and the data says that's the situation, not the family.";hs="About "+(100-stand)+" out of 100 Filipino households earn more than yours. "+cohortSaveLine+" Everything below is about capacity, never character.";}
   $("heroLine").textContent=hl; $("heroSub").textContent=hs;
 
   // PROFILE + tier scale
@@ -395,7 +395,11 @@ function update(){
   // SCORE
   const sIncome=stand, sReal=f;
   const sBreath=Math.max(0,Math.min(100,50+(ceilM>0?((ceilM-typ)/Math.max(typ,1))*100:-50)));
-  let sDisc=null; if(filled)sDisc=Math.round((filled-above.length)/filled*100);
+  let sDisc=null;
+  if(filled){let tot=0,cnt=0;
+    ACTS.forEach(([id,cat])=>{const v=+($(id).value||0); if(v>0){cnt++;
+      const med=co.cats[cat]/12; tot+= v<=med?100:Math.max(0,Math.min(100,med/v*100));}});
+    sDisc=Math.round(tot/cnt);}
   const parts=[sIncome,sReal,sBreath].concat(sDisc===null?[]:[sDisc]);
   const score=Math.round(parts.reduce((a,b)=>a+b,0)/parts.length);
   animScore(score);
@@ -403,7 +407,10 @@ function update(){
   $("sb1").style.width=sIncome+"%";$("sv1").textContent=Math.round(sIncome);
   $("sb2").style.width=sReal+"%";$("sv2").textContent=Math.round(sReal);
   $("sb3").style.width=sBreath+"%";$("sv3").textContent=Math.round(sBreath);
-  if(sDisc!==null){$("discRow").style.opacity=1;$("sb4").style.width=sDisc+"%";$("sv4").textContent=sDisc;$("discNote").textContent="Spending discipline reflects the categories you entered vs your cohort's medians.";}
+  if(sDisc!==null){$("discRow").style.opacity=1;$("sb4").style.width=sDisc+"%";$("sv4").textContent=sDisc;
+    $("discNote").textContent= sDisc<50
+      ? "Low score: "+above.length+" of "+filled+" entered categories are above your cohort's median. Each is scored by how far above (20% over ≈ 83 points, not zero). Tip: make sure the income entered in Step 1 matches this household's actual income — comparing real expenses against a lower-income cohort makes normal spending look extravagant."
+      : "Spending discipline scores each entered category against your cohort's median, with graded credit for small overages.";}
   else {$("discRow").style.opacity=.55;$("sb4").style.width="0%";$("sv4").textContent="—";$("discNote").textContent="Goal realism and Spending discipline sharpen as you complete the diagnosis below.";}
 
   // PLAN
@@ -518,7 +525,7 @@ function prepPrint(){
 }
 function doShare(){
   const L=last;
-  const t="I'm a "+TIERS[L.ti][1]+" Household — income higher than "+L.stand+"% of Filipino families, Health Score "+L.score+"/100. See where your family stands (data: PSA FIES 2023): ";
+  const t="I'm a "+TIERS[L.ti][1]+" Household — Household Health Score "+L.score+"/100 vs 163,268 Filipino families. See where your family stands (data: PSA FIES 2023): ";
   const u=location.href.startsWith("http")?location.href:"";
   if(navigator.share){navigator.share({title:"Alkansya",text:t,url:u||undefined}).catch(()=>{});}
   else{navigator.clipboard&&navigator.clipboard.writeText(t+u);
