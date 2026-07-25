@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Alkansya — the financial mirror for Filipino families</title>
-<meta name="description" content="See where your household stands among 163,268 Filipino families — and the one change most likely to improve your financial future. Dataset from PSA FIES 2023.">
+<meta name="description" content="See where your household stands among 163,268 Filipino families — and the one change most likely to improve your financial future. PSA FIES 2023.">
 <style>
   :root{--green:#14532D;--green2:#1C4A32;--deep:#0E2A1D;--gold:#E9C46A;--cream:#F4EFE4;--cream2:#EDE4CF;--ink:#1A1A1A;--mut:#8FBFA4;--red:#C0574F;--amber:#B98A1C;--ok:#2C6E49;}
   *{box-sizing:border-box;margin:0;padding:0}
@@ -124,7 +124,7 @@
 
 <!-- ============ STEP 1 ============ -->
 <div class="step show" id="step1">
-  <div class="card"><h2>Tell us about your family. Answer the following questions.<span class="tl">Ilarawan ang kalagayan ng iyong pamilya. Sagutin ang mga sumusunod na tanong.</span></h2></div>
+  <div class="card"><h2>Tell us about your family. Answer the questions below.<span class="tl">Ilarawan ang kalagayan ng iyong pamilya. Sagutin ang sumusunod na mga tanong.</span></h2></div>
   <div class="card"><h2>Monthly family income<span class="tl">Buwanang kita ng pamilya</span></h2>
     <input type="number" id="inc" min="1000" step="500" value="25000" inputmode="numeric">
     <div class="qbtns" id="incQuick">
@@ -256,7 +256,7 @@
     <div class="inner"><div id="catList" style="margin-top:4px"></div></div>
   </details>
 
-  <details class="sect"><summary>The three patterns · Ang tatlong pattern</summary>
+  <details class="sect"><summary>What sets savers apart · Ang pagkakaiba ng mga nakaka-ipon</summary>
     <div class="inner">
       <div style="font-size:12.5px;color:#3A3428;margin-bottom:6px" id="pattIntro"></div>
       <div id="pattList"></div>
@@ -490,17 +490,21 @@ function update(){
   if(sd&&sd.top.length){
     const tot=sd.top.reduce((a,t)=>a+t[1],0);
     const medals=["🥇","🥈","🥉"];
-    $("pattIntro").textContent="In your cohort, the gap between goal-reachers and everyone else concentrates here (share of the total difference):";
+    $("pattIntro").innerHTML="Comparing families who reach a goal like yours with those who don't, most of the difference comes from these three things:<span class='tl' style='margin-top:4px'>Sa mga pamilyang umaabot at hindi umaabot sa ganitong goal, dito pinaka-nagkakaiba:</span>";
     $("pattList").innerHTML=sd.top.slice(0,3).map((t,i)=>{
       const [c,d]=t;const sh=Math.round(d/tot*100);
       const inp=ACTS.find(a=>a[1]===c);const v=inp?+($(inp[0]).value||0):0;
-      const mark=filled?(v>0?(v>co.cats[c]/12*1.1?"⚠️ above":"✓ ok"):"—"):"";
-      return '<div class="patt"><span>'+medals[i]+' '+CATN[c][0]+'</span><span><b>'+sh+'%</b> <span style="font-size:11px;color:#8a8270">'+mark+'</span></span></div>';
+      let markTxt, markColor;
+      if(!inp) { markTxt="Not tracked yet · Hindi pa sinusukat"; markColor="#8a8270"; }
+      else if(v<=0) { markTxt="No data yet · Wala pang datos"; markColor="#8a8270"; }
+      else if(v>co.cats[c]/12*infl*1.1) { markTxt="Higher here · Mas malaki dito"; markColor="var(--red)"; }
+      else { markTxt="Fine here · Ayos na rito"; markColor="var(--ok)"; }
+      return '<div class="patt"><span>'+medals[i]+' '+CATN[c][0]+'<span class="tl" style="margin:0">'+CATN[c][1]+'</span></span><span style="text-align:right"><b>'+sh+'%</b><br><span style="font-size:10.5px;color:'+markColor+'">'+markTxt+'</span></span></div>';
     }).join("");
     if(filled){const pats=sd.top.slice(0,3).map(t=>t[0]);
-      const pm=ACTS.filter(([id,c])=>pats.includes(c)&&(+($(id).value||0))>co.cats[c]/12*1.1).length;
-      $("pattMatch").innerHTML="Your entered spending is above the cohort median in <b>"+pm+" of "+Math.min(3,pats.length)+"</b> of these patterns.";
-    } else $("pattMatch").innerHTML="";
+      const pm=ACTS.filter(([id,c])=>pats.includes(c)&&(+($(id).value||0))>co.cats[c]/12*infl*1.1).length;
+      $("pattMatch").innerHTML="Out of these 3, your spending is higher than average in <b>"+pm+"</b>.<span class='tl' style='margin-top:4px'>Sa tatlong ito, <b>"+pm+"</b> lang ang mas malaki ang gastos mo.</span>";
+    } else $("pattMatch").innerHTML="Fill in the Reality Check above to see how your family compares here.<span class='tl' style='margin-top:4px'>Punan ang Reality Check sa itaas para makita kung paano kayo dito.</span>";
   }
 
   // WHAT-IF
@@ -525,23 +529,44 @@ function update(){
   $("paceLine").innerHTML="At your cohort's median savings pace ("+peso(co.ms/12*infl)+"/mo, adjusted to today's prices), this goal takes <b>"+fmtMonths(medPaceM)+"</b>.";
 
   // INSIGHT
-  let ins;
-  const overM = above.reduce((a,t)=>a+t[1],0);   // total monthly overspend vs cohort medians
+  let insEn, insTl;
+  const overM = above.reduce((a,t)=>a+t[1],0);
   const reqMo = S/12;
-  if(ceilM<=0)ins="Right now the goal is bigger than the timeline allows — a runway problem, not a character problem. Families with your income and household size save "+peso(co.ms/12*infl)+"/mo at the median (adjusted to today's prices); a longer timeline makes this real.";
-  else if(filled&&above.length===0)ins="Your entered spending is at or below families with your income and household size in every category you shared — this positive verdict is earned by your own numbers. Your next lever is time and consistency, not cutting.";
-  else if(filled){
+  const savPeso=peso(co.ms/12*infl);
+  if(ceilM<=0){
+    insEn="This goal doesn't fit yet — and that's about the timeline, not about you. To save this much this fast, you'd need to save more than you earn, which isn't possible for anyone. Try a longer timeline, a smaller goal, or a higher income, and the math will work.";
+    insTl="Hindi pa kasya ang goal na ito — hindi dahil sa iyo, kundi sa oras. Kailangan mong mag-ipon nang higit pa sa kinikita mo, na imposible para kaninuman. Subukan ang mas mahabang panahon, mas maliit na goal, o mas malaking kita.";
+  } else if(filled&&above.length===0){
+    insEn="Good news: everything you told us about your spending is already at or below what similar families spend. You are not the problem here — the plan just needs time.";
+    insTl="Magandang balita: lahat ng inilagay mong gastos ay katumbas o mas mababa pa sa ibang pamilya. Hindi ikaw ang problema — kailangan lang ng oras ang plano.";
+  } else if(filled){
     const belowSum=below.reduce((a,t)=>a+Math.max(0,t[1]),0);
     const net=overM-belowSum;
-    const mixLine="Your mix differs from similar families — higher on "+above.map(t=>CATN[t[0]][0].toLowerCase()).join(", ")+(belowSum>500?", but lower on "+below.filter(t=>t[1]>500).map(t=>CATN[t[0]][0].toLowerCase()).join(", "):"")+". ";
-    if(net<=500) ins=mixLine+"Netted out, your entered spending is at or below families with your income and household size — so the \""+pills[0]+"\" verdict and this mirror agree: families like yours sustain this rate, and your pattern is not the obstacle. Protect the pattern and the plan holds.";
-    else if(rate<=co.mr+1) ins=mixLine+"Netted out, you run about "+peso(net)+"/month above the median pattern. How that squares with the \""+pills[0]+"\" verdict: half of families like yours already save "+co.mr.toFixed(0)+"% of income or more, and your target is "+rate.toFixed(0)+"% — a normal goal for your cohort. Closing the "+peso(net)+" net gap simply puts you in step with the median family, who is already on pace for a goal like yours.";
-    else ins=mixLine+"Netted out, you run about "+peso(net)+"/month above the median pattern — and your target rate ("+rate.toFixed(0)+"%) is higher than your cohort's median ("+co.mr.toFixed(0)+"%), so matching the median pattern is not enough by itself. Closing the net gap frees "+peso(net)+"/mo of the "+peso(reqMo)+"/mo your goal needs; the rest comes from income, a longer timeline, or cuts deeper than the median. That is arithmetic, not judgment.";
+    const higherList=above.map(t=>CATN[t[0]][0].toLowerCase()).join(", ");
+    const lowerList=below.filter(t=>t[1]>500).map(t=>CATN[t[0]][0].toLowerCase()).join(", ");
+    const higherListTl=above.map(t=>CATN[t[0]][1].toLowerCase()).join(", ");
+    const lowerListTl=below.filter(t=>t[1]>500).map(t=>CATN[t[0]][1].toLowerCase()).join(", ");
+    if(net<=500){
+      insEn="You spend more than similar families on "+higherList+" — but less on "+(lowerList||"other things")+". Add it all up, and you're doing about as well as the typical family who reaches a goal like yours. Your spending is not what's holding you back.";
+      insTl="Mas malaki ang gastos mo sa "+higherListTl+" — pero mas mababa naman sa "+(lowerListTl||"iba")+". Kapag tinotal, kapareho ka lang ng karaniwang pamilyang umaabot sa ganitong goal. Hindi ang gastos mo ang humahadlang.";
+    } else if(rate<=co.mr+1){
+      insEn="Overall, you spend about "+peso(net)+" a month more than similar families. But your goal isn't unusual — half of families like yours already save this much or more. Closing that "+peso(net)+" gap would put you right where the typical family already is.";
+      insTl="Sa kabuuan, mas malaki ang gastos mo nang mga "+peso(net)+"/buwan kumpara sa iba. Pero hindi kakaiba ang goal mo — kalahati ng pamilyang katulad mo ay nakaka-ipon na ng ganito o higit pa. Kung maisasara ang puwang na "+peso(net)+", kasing-tayo ka na ng karaniwang pamilya.";
+    } else {
+      insEn="Here's the honest math: you spend about "+peso(net)+" a month more than similar families, and this goal needs more saving than most families your size manage. Closing that gap helps, but the rest has to come from a longer timeline or higher income — this isn't about willpower, it's the numbers.";
+      insTl="Ito ang tapat na resulta: mas malaki ang gastos mo nang mga "+peso(net)+"/buwan kumpara sa iba, at kailangan ng goal na ito ng mas malaking ipon kaysa karamihan sa laki ninyo. Makakatulong ang pagsasara ng puwang, pero kailangan pa rin ng mas mahabang panahon o mas malaking kita — hindi ito tungkol sa lakas ng loob, numero lang ito.";
+    }
+  } else if(gap<-1000&&f>=40){
+    insEn="On paper this looks doable — families like yours usually spend less than what this plan allows. But we don't know your real numbers yet. Fill in the Reality Check above to see if that's true for your family too.";
+    insTl="Sa datos, kaya ito — karaniwang gumagastos nang mas kaunti ang mga pamilyang katulad mo kumpara sa pwede ninyong gastusin. Pero hindi pa namin alam ang totoong gastos ninyo. Punan ang Reality Check sa itaas para malaman.";
+  } else if(f>=25){
+    insEn="This goal is realistic for a family like yours — plenty of similar families reach it. Whether your family can depends on your actual spending. Fill in the Reality Check above to find out for sure.";
+    insTl="Makakamit ang goal na ito ng pamilyang katulad ninyo — marami ang umaabot dito. Depende ito sa totoong gastos ninyo. Punan ang Reality Check sa itaas para matiyak.";
+  } else {
+    insEn="This savings rate is rare, even among families with more room to spare — "+savPeso+"/mo is closer to what families like yours typically manage. That's not about laziness; it's about how much is left after basic needs. The real fix is a longer timeline or higher income, not a tighter budget.";
+    insTl="Bihira ang ganitong laki ng ipon, kahit sa mga pamilyang mas maluwag — mas malapit sa "+savPeso+"/buwan ang karaniwang naiipon ng katulad ninyo. Hindi ito tungkol sa katamaran — tungkol ito sa natitira pagkatapos ng pangunahing pangangailangan. Ang solusyon ay mas mahabang panahon o mas malaking kita, hindi mas mahigpit na badyet.";
   }
-  else if(gap<-1000&&f>=40)ins="There is room on paper: families with your income and household size typically spend "+peso(typ)+"/month, and your plan leaves "+peso(ceilM)+"/month for expenses. But that describes them, not yet you — whether it holds for your household depends on your actual spending. Fill the Reality Check above for the true mirror.";
-  else if(f>=25)ins="Your goal sits within what families with your income and household size actually do. Whether your household is on that path depends on your actual spending — the Reality Check above turns this from a statistic into your mirror.";
-  else ins="At this income and timeline, the plan needs "+rate.toFixed(0)+"% of income saved — far beyond what Filipino families actually sustain. That is a capacity signal, not laziness, and no amount of tipid closes it. Change one lever: a longer timeline, a smaller goal, or higher income. The saving instinct shows up the moment the math allows it.";
-  $("insight").textContent=ins;
+  $("insight").innerHTML="<div>"+insEn+"</div><div style=\"margin-top:9px;font-size:12.5px;color:#CFE3D6;line-height:1.6\">"+insTl+"</div>";
 
   last={mInc,fs,goal,yrs,S,rate,ceilM,typ,co,entries,score,stand,ti};
 }
