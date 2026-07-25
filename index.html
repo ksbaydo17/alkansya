@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Alkansya — the financial mirror for Filipino families</title>
-<meta name="description" content="See where your household stands among 163,268 Filipino families — and the one change most likely to improve your financial future. Dataset from PSA FIES 2023.">
+<meta name="description" content="See where your household stands among 163,268 Filipino families — and the one change most likely to improve your financial future. PSA FIES 2023.">
 <style>
   :root{--green:#14532D;--green2:#1C4A32;--deep:#0E2A1D;--gold:#E9C46A;--cream:#F4EFE4;--cream2:#EDE4CF;--ink:#1A1A1A;--mut:#8FBFA4;--red:#C0574F;--amber:#B98A1C;--ok:#2C6E49;}
   *{box-sizing:border-box;margin:0;padding:0}
@@ -124,7 +124,7 @@
 
 <!-- ============ STEP 1 ============ -->
 <div class="step show" id="step1">
-  <div class="card"><h2>Tell us about your family. Answer the questions below.<span class="tl">Ilarawan ang kalagayan ng iyong pamilya. Sagutin ang mga sumusunod na tanong.</span></h2></div>
+  <div class="card"><h2>Tell us about your family. Answer the following questions.<span class="tl">Ilarawan ang kalagayan ng iyong pamilya. Sagutin ang mga sumusunod na tanong.</span></h2></div>
   <div class="card"><h2>Monthly family income<span class="tl">Buwanang kita ng pamilya</span></h2>
     <input type="number" id="inc" min="1000" step="500" value="25000" inputmode="numeric">
     <div class="qbtns" id="incQuick">
@@ -238,6 +238,7 @@
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
       <div><div class="sub">Food at home</div><input type="number" id="aFood" placeholder="₱ / month" inputmode="numeric" style="font-size:14px;font-weight:400;padding:9px 10px"></div>
       <div><div class="sub">Eating out</div><input type="number" id="aOut" placeholder="₱ / month" inputmode="numeric" style="font-size:14px;font-weight:400;padding:9px 10px"></div>
+      <div><div class="sub">Housing and utilities</div><input type="number" id="aHousing" placeholder="₱ / month" inputmode="numeric" style="font-size:14px;font-weight:400;padding:9px 10px"></div>
       <div><div class="sub">Transport</div><input type="number" id="aTrans" placeholder="₱ / month" inputmode="numeric" style="font-size:14px;font-weight:400;padding:9px 10px"></div>
       <div><div class="sub">Phone and internet</div><input type="number" id="aComm" placeholder="₱ / month" inputmode="numeric" style="font-size:14px;font-weight:400;padding:9px 10px"></div>
     </div>
@@ -312,7 +313,7 @@ const FBN={"1-3":"Compact Family","4-5":"Growing Family","6+":"Extended Family"}
 const peso=n=>"₱"+Math.round(Math.abs(n)).toLocaleString("en-PH");
 const $=id=>document.getElementById(id);
 let area=1, remit=0, whatSel=null, confettiDone=false;
-const ACTS=[["aFood","FOOD_HOME"],["aOut","FOOD_OUTSIDE"],["aTrans","TRANSPORT"],["aComm","COMMUNICATION"]];
+const ACTS=[["aFood","FOOD_HOME"],["aOut","FOOD_OUTSIDE"],["aHousing","HOUSING_WATER"],["aTrans","TRANSPORT"],["aComm","COMMUNICATION"]];
 
 function gbmSpend(mInc,fs,areaI,rem){
   const key=""+areaI+rem+Math.min(12,Math.max(1,fs));
@@ -611,7 +612,7 @@ function doShare(){
   else{navigator.clipboard&&navigator.clipboard.writeText(t+u);
     const b=$("shareBtn");const o=b.textContent;b.textContent="Copied! Paste anywhere 📋";setTimeout(()=>b.textContent=o,1800);}
 }
-["inc","fs","goal","yrs","ret","infl","aFood","aOut","aTrans","aComm"].forEach(id=>$(id).addEventListener("input",update));
+["inc","fs","goal","yrs","ret","infl","aFood","aOut","aHousing","aTrans","aComm"].forEach(id=>$(id).addEventListener("input",update));
 $("incQuick").addEventListener("click",e=>{const b=e.target.closest("button");if(b){$("inc").value=b.dataset.v;update();}});
 $("areaBtns").addEventListener("click",e=>{const b=e.target.closest("button");if(b){area=+b.dataset.v;[...$("areaBtns").children].forEach(x=>x.classList.toggle("on",+x.dataset.v===area));update();}});
 $("remitBtns").addEventListener("click",e=>{const b=e.target.closest("button");if(b){remit=+b.dataset.v;[...$("remitBtns").children].forEach(x=>x.classList.toggle("on",+x.dataset.v===remit));update();}});
