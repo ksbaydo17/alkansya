@@ -124,7 +124,7 @@
 
 <!-- ============ STEP 1 ============ -->
 <div class="step show" id="step1">
-  <div class="card"><h2>Tell us about your family. Answer the following questions.<span class="tl">Ilarawan ang iyong pamilya. Sagutin ang mga sumusunod na tanong.</span></h2></div>
+  <div class="card"><h2>Tell us about your family. Answer the following questions.<span class="tl">Ilarawan ang kalagayan ng pamilya mo. Sagutin ang mga sumusunod na tanong.</span></h2></div>
   <div class="card"><h2>Monthly family income<span class="tl">Buwanang kita ng pamilya</span></h2>
     <input type="number" id="inc" min="1000" step="500" value="25000" inputmode="numeric">
     <div class="qbtns" id="incQuick">
@@ -169,6 +169,7 @@
         <div><div class="v" id="pInc">—</div><div class="l">their median income</div></div>
         <div><div class="v" id="pSav">—</div><div class="l">their median savings</div></div>
       </div>
+      <div id="savCaveat" style="display:none;margin-top:10px;font-size:12px;color:#8a8270;line-height:1.55;text-align:left"></div>
     </div>
   </div>
 
@@ -308,7 +309,7 @@ const SD={"<100k|1-3":{"thr":20,"n":2163,"top":[["FOOD_HOME",8185],["HOUSING_WAT
 const IPCT=[60396,71973,80923,88201,94458,99735,104500,108982,113014,116935,120558,124000,127196,130393,133592,136750,139706,142620,145535,148419,151279,154046,156905,159802,162618,165190,167830,170700,173671,176470,179246,182003,184945,187740,190736,193620,196604,199726,202755,205887,209051,212324,215660,218988,222420,226000,229595,233229,236924,240700,244640,248858,253078,257000,261310,265777,270380,274880,279694,284619,289780,295020,300643,306592,312504,318807,325067,331890,338800,345620,353246,361440,369560,378369,387319,396737,406986,417607,428482,440000,451828,464860,479826,495000,511089,528638,548513,570561,593707,619101,649800,683937,722844,769281,826676,896993,997652,1153624,1449868];
 const INC_STEP=2500, INC_MIN=5000, INC_MAX=150000;
 const CATN={FOOD_HOME:["Food at home","Pagkain sa bahay"],FOOD_OUTSIDE:["Eating out","Kain sa labas"],HOUSING_WATER:["Housing and utilities","Bahay at tubig"],TRANSPORT:["Transport","Pamasahe"],COMMUNICATION:["Phone and internet","Load at internet"],HEALTH:["Health","Kalusugan"],EDUCATION:["Education","Edukasyon"],RECREATION:["Recreation","Libangan"]};
-const TIERS=[["<100k","Foundation","#C8A24B"],["100-200k","Rising","#D98E4A"],["200-300k","Steady","#4C8C5C"],["300-450k","Advancing","#2C6E49"],["450-700k","Established","#3E6FA3"],["700k+","Flourishing","#7B5EA7"]];
+const TIERS=[["<100k","Stretched","#C8A24B"],["100-200k","Tight-Budget","#D98E4A"],["200-300k","Steady","#4C8C5C"],["300-450k","Comfortable","#2C6E49"],["450-700k","Established","#3E6FA3"],["700k+","Flourishing","#7B5EA7"]];
 const FBN={"1-3":"Compact Family","4-5":"Growing Family","6+":"Extended Family"};
 const peso=n=>"₱"+Math.round(Math.abs(n)).toLocaleString("en-PH");
 const $=id=>document.getElementById(id);
@@ -410,6 +411,11 @@ function update(){
   $("pN").textContent=co.n.toLocaleString();
   $("pInc").textContent=peso(co.mi/12*infl)+"/mo";
   $("pSav").textContent=peso(co.ms/12*infl)+"/mo";
+  const savCaveat=document.getElementById("savCaveat");
+  if(ti<=1){
+    savCaveat.style.display="block";
+    savCaveat.innerHTML="For families at this income, that amount is often absorbed by unexpected costs — a thin buffer, not extra money to spend.<span class='tl' style='margin-top:3px'>Sa ganitong kita, kadalasang nauubos ito sa biglaang gastos — manipis na buffer, hindi dagdag na pera.</span>";
+  } else { savCaveat.style.display="none"; }
 
   // SCORE
   const sIncome=stand, sReal=f;
