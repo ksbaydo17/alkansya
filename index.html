@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Alkansya — the financial mirror for Filipino families</title>
-<meta name="description" content="See where your household stands among 163,268 Filipino families — and the one change most likely to improve your financial future. PSA FIES 2023.">
+<meta name="description" content="See where your household stands among 163,268 Filipino families — and the one change most likely to improve your financial future. Dataset from PSA FIES 2023.">
 <style>
   :root{--green:#14532D;--green2:#1C4A32;--deep:#0E2A1D;--gold:#E9C46A;--cream:#F4EFE4;--cream2:#EDE4CF;--ink:#1A1A1A;--mut:#8FBFA4;--red:#C0574F;--amber:#B98A1C;--ok:#2C6E49;}
   *{box-sizing:border-box;margin:0;padding:0}
@@ -124,7 +124,7 @@
 
 <!-- ============ STEP 1 ============ -->
 <div class="step show" id="step1">
-  <div class="card"><h2>Tell us about your family. Answer the questions below.<span class="tl">Ilarawan ang kalagayan ng iyong pamilya. Sagutin ang sumusunod na mga tanong.</span></h2></div>
+  <div class="card"><h2>Tell us about your family. Answer the questions below.<span class="tl">Ilarawan ang kalagayan ng iyong pamilya. Sagutin ang mga sumusunod na tanong.</span></h2></div>
   <div class="card"><h2>Monthly family income<span class="tl">Buwanang kita ng pamilya</span></h2>
     <input type="number" id="inc" min="1000" step="500" value="25000" inputmode="numeric">
     <div class="qbtns" id="incQuick">
@@ -466,6 +466,14 @@ function update(){
     let g="";
     above.forEach(([c,d,v,med])=>{g+='<div class="rcbox" style="background:#F5DEDB"><div class="c">'+CATN[c][0]+'</div><div class="d bad">▲ '+peso(d)+' MORE</div><div class="m">you: '+peso(v)+' · similar: '+peso(med)+'</div></div>';});
     below.forEach(([c,d,v,med])=>{g+='<div class="rcbox" style="background:#DCEBDC"><div class="c">'+CATN[c][0]+'</div><div class="d good">'+(d>med*0.1?'▼ '+peso(d)+' LESS':'✓ ON PAR')+'</div><div class="m">you: '+peso(v)+' · similar: '+peso(med)+'</div></div>';});
+    const belowSumRC=below.reduce((a,t)=>a+Math.max(0,t[1]),0);
+    const overMRC=above.reduce((a,t)=>a+t[1],0);
+    const netRC=overMRC-belowSumRC;
+    g+='<div style="grid-column:1/-1;margin-top:4px;padding-top:10px;border-top:1px dashed #C9BFA8;font-size:13px;color:#3A3428">'
+      +(netRC<=0
+        ? 'Add it all up: you spend about <b style="color:var(--ok)">'+peso(-netRC)+'/month LESS</b> than similar families overall.<span class="tl" style="margin-top:3px">Kung titignan lahat: mas mababa ng '+peso(-netRC)+'/buwan ang kabuuang gastos mo kumpara sa iba.</span>'
+        : 'Add it all up: you spend about <b style="color:var(--red)">'+peso(netRC)+'/month MORE</b> than similar families overall.<span class="tl" style="margin-top:3px">Kung titignan lahat: mas malaki ng '+peso(netRC)+'/buwan ang kabuuang gastos mo kumpara sa iba.</span>')
+      +'</div>';
     $("rcGrid").innerHTML=g;
   } else $("rcPanel").style.display="none";
 
@@ -547,8 +555,21 @@ function update(){
     const higherListTl=above.map(t=>CATN[t[0]][1].toLowerCase()).join(", ");
     const lowerListTl=below.filter(t=>t[1]>500).map(t=>CATN[t[0]][1].toLowerCase()).join(", ");
     if(net<=500){
-      insEn="You spend more than similar families on "+higherList+" — but less on "+(lowerList||"other things")+". Add it all up, and you're doing about as well as the typical family who reaches a goal like yours. Your spending is not what's holding you back.";
-      insTl="Mas malaki ang gastos mo sa "+higherListTl+" — pero mas mababa naman sa "+(lowerListTl||"iba")+". Kapag tinotal, kapareho ka lang ng karaniwang pamilyang umaabot sa ganitong goal. Hindi ang gastos mo ang humahadlang.";
+      const medPaceMIns=co.ms>0?goal/(co.ms/12*infl):Infinity;
+      const yrsGapMo=medPaceMIns-(yrs*12);
+      let whatIsEn, whatIsTl;
+      if(rate>co.mr+2 && yrsGapMo>2){
+        whatIsEn="So what is? Your goal needs a "+rate.toFixed(0)+"% savings rate, but families like yours typically manage "+co.mr.toFixed(0)+"%. At that typical pace, a goal like yours takes about "+fmtMonths(medPaceMIns)+" — you've given it "+yrs+" year"+(yrs>1?"s":"")+". The squeeze is the goal and the timeline together, not your habits.";
+        whatIsTl="Kaya ano? Kailangan ng goal mo ng "+rate.toFixed(0)+"% savings rate, pero "+co.mr.toFixed(0)+"% lang karaniwang kaya ng katulad mo. Sa normal na bilis, aabot ng "+fmtMonths(medPaceMIns)+" ang ganitong goal — "+yrs+" taon lang ang binigay mo. Ang goal at ang deadline ang masikip, hindi ang ugali mo.";
+      } else if(rate>co.mr+2){
+        whatIsEn="So what is? Your goal needs a "+rate.toFixed(0)+"% savings rate, higher than the "+co.mr.toFixed(0)+"% families like yours typically manage. That gap, not your habits, is the real squeeze.";
+        whatIsTl="Kaya ano? Kailangan ng goal mo ng "+rate.toFixed(0)+"% savings rate, mas mataas sa karaniwang "+co.mr.toFixed(0)+"% ng katulad mo. Ang puwang na iyon, hindi ang ugali mo, ang tunay na masikip.";
+      } else {
+        whatIsEn="This goal is simply on the ambitious side for your timeline — not because of anything you're doing wrong.";
+        whatIsTl="Ambisyoso lang ang goal na ito para sa iyong takdang panahon — hindi dahil sa mali kang ginagawa.";
+      }
+      insEn="You spend more than similar families on "+higherList+" — but less on "+(lowerList||"other things")+". Add it all up, and you're doing about as well as the typical family who reaches a goal like yours; your spending is not what's holding you back. "+whatIsEn;
+      insTl="Mas malaki ang gastos mo sa "+higherListTl+" — pero mas mababa naman sa "+(lowerListTl||"iba")+". Kapag tinotal, kapareho ka lang ng karaniwang pamilyang umaabot sa ganitong goal; hindi ang gastos mo ang humahadlang. "+whatIsTl;
     } else if(rate<=co.mr+1){
       insEn="Overall, you spend about "+peso(net)+" a month more than similar families. But your goal isn't unusual — half of families like yours already save this much or more. Closing that "+peso(net)+" gap would put you right where the typical family already is.";
       insTl="Sa kabuuan, mas malaki ang gastos mo nang mga "+peso(net)+"/buwan kumpara sa iba. Pero hindi kakaiba ang goal mo — kalahati ng pamilyang katulad mo ay nakaka-ipon na ng ganito o higit pa. Kung maisasara ang puwang na "+peso(net)+", kasing-tayo ka na ng karaniwang pamilya.";
