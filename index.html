@@ -124,7 +124,7 @@
 
 <!-- ============ STEP 1 ============ -->
 <div class="step show" id="step1">
-  <div class="card"><h2>Tell us about your family. Answer the following questions.<span class="tl">Ilarawan ang kalagayan ng pamilya mo. Sagutin ang mga sumusunod na tanong.</span></h2></div>
+  <div class="card"><h2>Tell us about your family. Answer the following questions.<span class="tl">Ilarawan ang kalagayan ng iyong pamilya. Sagutin ang mga sumusunod na tanong.</span></h2></div>
   <div class="card"><h2>Monthly family income<span class="tl">Buwanang kita ng pamilya</span></h2>
     <input type="number" id="inc" min="1000" step="500" value="25000" inputmode="numeric">
     <div class="qbtns" id="incQuick">
@@ -349,7 +349,8 @@ function plan(mInc,fs,areaI,rem,goal,yrs,r,infl){
 }
 function fmtMonths(m){
   if(!isFinite(m)||m>360)return "30+ years";
-  const y=Math.floor(m/12),mm=Math.round(m%12);
+  let y=Math.floor(m/12),mm=Math.round(m%12);
+  if(mm===12){y+=1;mm=0;}
   return (y? y+" yr"+(y>1?"s":""):"")+(y&&mm?" ":"")+(mm? mm+" mo":"")||"0 mo";
 }
 function confetti(){
@@ -571,9 +572,12 @@ function update(){
       } else if(rate>co.mr+2){
         whatIsEn="So what is? Your goal needs a "+rate.toFixed(0)+"% savings rate, higher than the "+co.mr.toFixed(0)+"% families like yours typically manage. That gap, not your habits, is the real squeeze.";
         whatIsTl="Kaya ano? Kailangan ng goal mo ng "+rate.toFixed(0)+"% savings rate, mas mataas sa karaniwang "+co.mr.toFixed(0)+"% ng katulad mo. Ang puwang na iyon, hindi ang ugali mo, ang tunay na masikip.";
+      } else if(rate<=co.mr){
+        whatIsEn="In fact, this goal asks for less than what families like yours typically save ("+co.mr.toFixed(0)+"%) — it is comfortably within reach.";
+        whatIsTl="Sa katunayan, mas mababa ang hinihingi ng goal na ito kaysa karaniwang naiipon ng katulad mo ("+co.mr.toFixed(0)+"%) — abot-kaya ito.";
       } else {
-        whatIsEn="This goal is simply on the ambitious side for your timeline — not because of anything you're doing wrong.";
-        whatIsTl="Ambisyoso lang ang goal na ito para sa iyong takdang panahon — hindi dahil sa mali kang ginagawa.";
+        whatIsEn="This goal sits right around what's typical for families like yours — a modest stretch, well within normal range.";
+        whatIsTl="Malapit lang ang goal na ito sa karaniwan ng katulad mo — bahagyang hamon lang, pero normal na saklaw.";
       }
       insEn="You spend more than similar families on "+higherList+" — but less on "+(lowerList||"other things")+". Add it all up, and you're doing about as well as the typical family who reaches a goal like yours; your spending is not what's holding you back. "+whatIsEn;
       insTl="Mas malaki ang gastos mo sa "+higherListTl+" — pero mas mababa naman sa "+(lowerListTl||"iba")+". Kapag tinotal, kapareho ka lang ng karaniwang pamilyang umaabot sa ganitong goal; hindi ang gastos mo ang humahadlang. "+whatIsTl;
